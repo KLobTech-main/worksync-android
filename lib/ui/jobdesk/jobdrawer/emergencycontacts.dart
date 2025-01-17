@@ -23,7 +23,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage> {
   // Function to get Emergency Contacts
   Future<void> getEmergencyContacts() async {
     try {
-      var user = await ApiService.getUserByEmail(widget.email);
+      var user = await ApiService.getUserByEmail(widget.email, context);
       setState(() {
         // If emergencyContactDetails is null, set it to an empty list
         emergencyContacts = user?.emergencyContactDetails ?? [];
@@ -182,6 +182,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage> {
                       emergencyContactNo: numberController.text,
                       relation: relationController.text,
                     ),
+                    context,
                   );
                 } else {
                   success = await ApiService.postEmergencyContact(
@@ -191,6 +192,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage> {
                       emergencyContactNo: numberController.text,
                       relation: relationController.text,
                     ),
+                    context,
                   );
                 }
 
@@ -243,7 +245,7 @@ class _EmergencyContactPageState extends State<EmergencyContactPage> {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     try {
       bool success =
-          await ApiService.deleteEmergencyContact(widget.email, name);
+          await ApiService.deleteEmergencyContact(widget.email, name, context);
       if (success) {
         Fluttertoast.showToast(
           timeInSecForIosWeb: 2,

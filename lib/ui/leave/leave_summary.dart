@@ -3,6 +3,7 @@ import 'package:dass/modal/leavesummarymodel.dart';
 import 'package:dass/ui/leave/leave_request_screen.dart';
 import 'package:dass/ui/leave/leavestatuscreen.dart';
 import 'package:dass/webservices/api.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,14 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
   bool isLoading = true;
   int _currentIndex = 0;
 
+  // Define colors for leave types
+  final Map<String, Color> leaveColors = {
+    'Optional': Colors.blue,
+    'Sick': Colors.green,
+    'Casual': Colors.orange,
+    'Paternity': Colors.red,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +41,7 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
       isLoading = true;
     });
 
-    final data = await ApiService.getLeave(widget.email!);
+    final data = await ApiService.getLeave(widget.email!, context);
 
     setState(() {
       user = data;
@@ -138,25 +147,65 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
                             : Colors.grey,
                   ),
                 ))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16.0,
-                    mainAxisSpacing: 16.0,
-                    children: [
-                      buildLeaveCard(
-                          'Optional', user!.monthlyLeaves, user!.allLeaves),
-                      buildLeaveCard(
-                          'Sick', user!.monthlyLeaves, user!.allLeaves),
-                      buildLeaveCard(
-                          'Casual', user!.monthlyLeaves, user!.allLeaves),
-                      buildLeaveCard(
-                          'Paternity', user!.monthlyLeaves, user!.allLeaves),
-                    ],
-                  ),
+              : Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16.0,
+                          mainAxisSpacing: 16.0,
+                          children: [
+                            buildLeaveCard('Optional', user!.monthlyLeaves,
+                                user!.allLeaves),
+                            buildLeaveCard(
+                                'Sick', user!.monthlyLeaves, user!.allLeaves),
+                            buildLeaveCard(
+                                'Casual', user!.monthlyLeaves, user!.allLeaves),
+                            buildLeaveCard('Paternity', user!.monthlyLeaves,
+                                user!.allLeaves),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: PieChart(
+                          PieChartData(
+                            sections: getPieChartSections(),
+                            centerSpaceRadius: 40,
+                            sectionsSpace: 4,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    )
+                  ],
                 ),
     );
+  }
+
+  List<PieChartSectionData> getPieChartSections() {
+    final leaveTypes = ['Optional', 'Sick', 'Casual', 'Paternity'];
+    final leaveValues = leaveTypes
+        .map((type) => user?.allLeaves?.leaveTypeBalance?[type] ?? 0.0)
+        .toList();
+
+    return List.generate(leaveTypes.length, (i) {
+      final color = [Colors.blue, Colors.green, Colors.orange, Colors.red][i];
+      return PieChartSectionData(
+        color: color,
+        value: leaveValues[i],
+        title: '${leaveValues[i]}',
+        radius: 50,
+        titleStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      );
+    });
   }
 
   Widget buildLeaveCard(

@@ -54,10 +54,7 @@ class _AttendanceRequestState extends State<AttendanceRequest> {
       }
 
       final responseData = await ApiService.getAttendanceRequest(
-        widget.email!,
-        formattedStartDate,
-        formattedEndDate,
-      );
+          widget.email!, formattedStartDate, formattedEndDate, context);
 
       setState(() {
         attendanceData = responseData.map((e) => e.toJson()).toList();
@@ -270,112 +267,117 @@ class _AttendanceRequestState extends State<AttendanceRequest> {
                 ),
                 SizedBox(height: 16),
                 Expanded(
-                  child: attendanceData.isNotEmpty
-                      ? ListView.builder(
-                          itemCount: attendanceData.length,
-                          itemBuilder: (context, index) {
-                            final record = attendanceData[index];
-                            final date = DateTime.parse(record['date']);
-                            return Card(
-                              elevation: 4,
-                              color: themeProvider.themeData.brightness ==
-                                      Brightness.light
-                                  ? Colors.white
-                                  : Colors.black,
-                              child: ListTile(
-                                title: Text(
-                                  DateFormat(
-                                    'dd MMM yyyy',
-                                  ).format(date),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17,
-                                    color: themeProvider.themeData.brightness ==
-                                            Brightness.light
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Punch In: ${record['punchInTime']}',
-                                      style: TextStyle(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.black87
-                                            : Colors.white70,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Punch Out: ${record['punchOutTime']}',
-                                      style: TextStyle(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.black87
-                                            : Colors.white70,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Working Hours: ${record['totalWorkingHours']}',
-                                      style: TextStyle(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.black87
-                                            : Colors.white70,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.info_outline,
-                                  size: 48,
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.grey
-                                      : Colors.white60),
-                              SizedBox(height: 8),
-                              Text(
-                                "No data available for the selected range.",
-                                style: TextStyle(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.grey
-                                      : Colors.white70,
-                                ),
-                              ),
-                            ],
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: themeProvider.themeData.brightness ==
+                                    Brightness.light
+                                ? Colors.indigo.shade900
+                                : Color(0xFF57C9E7),
                           ),
-                        ),
+                        )
+                      : attendanceData.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: attendanceData.length,
+                              itemBuilder: (context, index) {
+                                final record = attendanceData[index];
+                                final date = DateTime.parse(record['date']);
+                                return Card(
+                                  elevation: 4,
+                                  color: themeProvider.themeData.brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : Colors.black,
+                                  child: ListTile(
+                                    title: Text(
+                                      DateFormat(
+                                        'dd MMM yyyy',
+                                      ).format(date),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17,
+                                        color: themeProvider
+                                                    .themeData.brightness ==
+                                                Brightness.light
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Punch In: ${record['punchInTime']}',
+                                          style: TextStyle(
+                                            color: themeProvider
+                                                        .themeData.brightness ==
+                                                    Brightness.light
+                                                ? Colors.black87
+                                                : Colors.white70,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          'Punch Out: ${record['punchOutTime']}',
+                                          style: TextStyle(
+                                            color: themeProvider
+                                                        .themeData.brightness ==
+                                                    Brightness.light
+                                                ? Colors.black87
+                                                : Colors.white70,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          'Working Hours: ${record['totalWorkingHours']}',
+                                          style: TextStyle(
+                                            color: themeProvider
+                                                        .themeData.brightness ==
+                                                    Brightness.light
+                                                ? Colors.black87
+                                                : Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.info_outline,
+                                      size: 48,
+                                      color:
+                                          themeProvider.themeData.brightness ==
+                                                  Brightness.light
+                                              ? Colors.grey
+                                              : Colors.white60),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "No data available for the selected range.",
+                                    style: TextStyle(
+                                      color:
+                                          themeProvider.themeData.brightness ==
+                                                  Brightness.light
+                                              ? Colors.grey
+                                              : Colors.white70,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                 ),
               ],
             ),
           ),
-          if (isLoading)
-            Center(
-              child: CircularProgressIndicator(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.indigo.shade900
-                    : Color(0xFF57C9E7),
-              ),
-            ),
         ],
       ),
     );

@@ -29,7 +29,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage> {
   String? role;
 
   void calculateDays() {
-    if (leaveDuration == "First Half" || leaveDuration == "Second Half") {
+    if (leaveDuration == "FirstHalf" || leaveDuration == "SecondHalf") {
       // Half-day leave
       setState(() {
         daysController.text = "0.5";
@@ -417,7 +417,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage> {
                 ),
               SizedBox(height: 16),
               // End Date Picker for Multiple Days
-              if (leaveDuration == "Multiple Days")
+              if (leaveDuration == "MultipleDays")
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

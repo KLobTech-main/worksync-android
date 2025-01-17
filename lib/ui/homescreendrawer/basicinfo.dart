@@ -27,7 +27,7 @@ class _BasicInformationPageState extends State<BasicInformationPage> {
 
   Future<void> fetchUserData() async {
     try {
-      final data = await ApiService.getUserByEmail(widget.userEmail);
+      final data = await ApiService.getUserByEmail(widget.userEmail, context);
       if (data != null) {
         setState(() {
           userData = data;

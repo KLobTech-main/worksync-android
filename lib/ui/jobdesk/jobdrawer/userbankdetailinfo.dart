@@ -21,7 +21,8 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
   @override
   void initState() {
     super.initState(); // Close the current page
-    userBankDetails = ApiService.getUserBankDetailsByEmail(widget.email);
+    userBankDetails =
+        ApiService.getUserBankDetailsByEmail(widget.email, context);
   }
 
   @override
@@ -138,7 +139,7 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                           setState(() {
                             userBankDetails =
                                 ApiService.getUserBankDetailsByEmail(
-                                    widget.email);
+                                    widget.email, context);
                           });
                         }
                       },
@@ -242,7 +243,7 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
           if (result == true) {
             setState(() {
               userBankDetails =
-                  ApiService.getUserBankDetailsByEmail(widget.email);
+                  ApiService.getUserBankDetailsByEmail(widget.email, context);
             });
           }
         },

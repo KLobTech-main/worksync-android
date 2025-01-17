@@ -20,7 +20,7 @@ class _AssetsDialogState extends State<AssetsDialog> {
   @override
   void initState() {
     super.initState();
-    _assetsFuture = ApiService().fetchAssets(widget.email);
+    _assetsFuture = ApiService().fetchAssets(widget.email, context);
   }
 
   @override

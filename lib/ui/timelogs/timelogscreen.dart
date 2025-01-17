@@ -55,7 +55,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     _loadUserData();
-    //fetchAttendanceStatus();
+    //checkAttendanceStatus();
 
     // Use the actual email from the widget, not a hardcoded string
     String email = widget.email!; // Accessing widget property for dynamic email
@@ -69,40 +69,62 @@ class _DashboardState extends State<Dashboard> {
     fetchTimeLog(email, year, month);
   }
 
-  // Future<void> fetchAttendanceStatus() async {
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+
+  //   // Use context-dependent operations here
+  //   checkAttendanceStatus();
+  // }
+
+  // Future<void> checkAttendanceStatus() async {
+  //   print('................................');
   //   try {
-  //     setState(() {
-  //       isLoading = true;
-  //     });
+  //     final response = await ApiService.getAttendanceStatus(email!);
+  //     print("Response: $response");
 
-  //     final response = await ApiService.getAttendanceStatus(widget.email!);
+  //     if (response != null) {
+  //       final statusCode = response['statusCode'];
+  //       final body = response['body'];
 
-  //     if (response != null && response['hasPunchedIn'] != null) {
-  //       setState(() {
-  //         hasPunchedIn = response['hasPunchedIn'];
-  //       });
+  //       if (statusCode == 200) {
+  //         if (body != null && body['punched_in'] == true) {
+  //           _showPopup("You already punched in", Colors.green);
+  //         } else {
+  //           _showPopup("You are not punched in", Colors.red);
+  //         }
+  //       } else if (statusCode == 404) {
+  //         _showPopup("You are not punched in", Colors.red);
+  //       } else {
+  //         _showPopup("Unexpected response: $statusCode", Colors.orange);
+  //       }
   //     } else {
-  //       // Fluttertoast.showToast(
-  //       //   msg: "Error fetching attendance status.",
-  //       //   toastLength: Toast.LENGTH_SHORT,
-  //       //   gravity: ToastGravity.BOTTOM,
-  //       //   backgroundColor: Colors.red,
-  //       //   textColor: Colors.white,
-  //       // );
+  //       _showPopup("Failed to fetch attendance status", Colors.orange);
   //     }
   //   } catch (e) {
-  //     // Fluttertoast.showToast(
-  //     //   msg: "Error: $e",
-  //     //   toastLength: Toast.LENGTH_SHORT,
-  //     //   gravity: ToastGravity.BOTTOM,
-  //     //   backgroundColor: Colors.red,
-  //     //   textColor: Colors.white,
-  //     // );
-  //   } finally {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
+  //     _showPopup("Error connecting to server: $e", Colors.red);
   //   }
+  // }
+
+  // void _showPopup(String message, Color color) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text("Attendance Status"),
+  //         content: Text(message),
+  //         backgroundColor: color.withOpacity(0.2),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text("OK"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
   // }
 
   Future<void> _loadUserData() async {
@@ -143,7 +165,7 @@ class _DashboardState extends State<Dashboard> {
         isLoading = true;
       });
 
-      final result = await ApiService.getTimeLog(email, year, month);
+      final result = await ApiService.getTimeLog(email, year, month, context);
 
       setState(() {
         isLoading = false;
@@ -247,7 +269,8 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       // Call the API
-      final response = await ApiService.punchIn(payload, punchInTime, email);
+      final response =
+          await ApiService.punchIn(payload, punchInTime, email, context);
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -413,8 +436,8 @@ class _DashboardState extends State<Dashboard> {
     };
 
     try {
-      final response =
-          await ApiService.teaStart(payload, email, punchInId!, teaStartTime);
+      final response = await ApiService.teaStart(
+          payload, email, punchInId!, teaStartTime, context);
 
       if (response.statusCode == 200) {
         setState(() {
@@ -535,8 +558,8 @@ class _DashboardState extends State<Dashboard> {
     };
 
     try {
-      final response =
-          await ApiService.teaEnd(payload, email, punchInId!, teaEndTime);
+      final response = await ApiService.teaEnd(
+          payload, email, punchInId!, teaEndTime, context);
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -692,7 +715,7 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       final response = await ApiService.startLunchBreak(
-          payload, widget.email!, punchInId!, lunchStartTime);
+          payload, widget.email!, punchInId!, lunchStartTime, context);
 
       if (response.statusCode == 200) {
         setState(() {
@@ -818,7 +841,7 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       final response = await ApiService.endLunchBreak(
-          payload, widget.email!, punchInId!, lunchEndTime);
+          payload, widget.email!, punchInId!, lunchEndTime, context);
 
       if (response.statusCode == 200) {
         // final responseData = json.decode(response.body);
@@ -946,8 +969,8 @@ class _DashboardState extends State<Dashboard> {
     print("PunchIn Payload: $payload");
 
     try {
-      final response = await ApiService.punchOut(
-          payload, widget.email!, punchInId!, widget.name!, punchOutTime);
+      final response = await ApiService.punchOut(payload, widget.email!,
+          punchInId!, widget.name!, punchOutTime, context);
 
       if (response.statusCode == 200) {
         if (!mounted) return; // Ensure the widget is still in the widget tree
@@ -1001,7 +1024,7 @@ class _DashboardState extends State<Dashboard> {
             : Color(0xFF1C1F26),
         // backgroundColor: Colors.grey.shade900,
         appBar: AppBar(
-          title: Text('Dashboard',
+          title: Text('TimeLog',
               style: TextStyle(
                 color: themeProvider.themeData.brightness == Brightness.light
                     ? Colors.white
@@ -1053,240 +1076,240 @@ class _DashboardState extends State<Dashboard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Top Row with Icons and Labels
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Flexible(
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (!isPunchInLoading && !hasPunchedIn) {
-                                    handlePunchIn(); // Call handlePunchIn only when conditions are met
-                                  }
-                                  // else if (hasPunchedIn) {
-                                  //   Fluttertoast.showToast(
-                                  //     msg: "You have already punched in.",
-                                  //     toastLength: Toast.LENGTH_SHORT,
-                                  //     gravity: ToastGravity.BOTTOM,
-                                  //     backgroundColor: Colors.red,
-                                  //     textColor: Colors.white,
-                                  //     fontSize: 16.0,
-                                  //   );
-                                  // }
-                                },
-                                child: IconButtonWidget(
-                                  icon: Icons.login,
-                                  label: isPunchInLoading
-                                      ? "Punching In"
-                                      : (hasPunchedIn
-                                          ? "Punched In"
-                                          : "Punch In"),
-                                  iconColor:
-                                      themeProvider.themeData.brightness ==
-                                              Brightness.light
-                                          ? Colors.green
-                                          : Colors.greenAccent,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          themeProvider.themeData.brightness ==
-                                                  Brightness.light
-                                              ? Colors.grey.withOpacity(0.5)
-                                              : Colors.black.withOpacity(0.3),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: GestureDetector(
-                                onTap: isPunchOutLoading || !hasPunchedIn
-                                    ? null
-                                    : endPunchOutTime, // Disable if not punched in
-                                child: Opacity(
-                                  opacity: isPunchOutLoading || !hasPunchedIn
-                                      ? 0.5
-                                      : 1.0, // Reduce opacity when disabled
-                                  child: IconButtonWidget(
-                                    icon: Icons.logout,
-                                    label: isPunchOutLoading
-                                        ? "Punching Out"
-                                        : "Punched Out",
-                                    iconColor: isPunchOutLoading ||
-                                            !hasPunchedIn
-                                        ? themeProvider.themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.grey
-                                            : Colors.grey
-                                                .shade700 // Adjust color when disabled
-                                        : themeProvider.themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.red
-                                            : Colors
-                                                .redAccent, // Adjust icon color for dark theme
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.grey.withOpacity(0.5)
-                                            : Colors.black.withOpacity(0.3),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //   children: [
+                        //     Flexible(
+                        //       child: GestureDetector(
+                        //         onTap: () {
+                        //           if (!isPunchInLoading && !hasPunchedIn) {
+                        //             handlePunchIn(); // Call handlePunchIn only when conditions are met
+                        //           }
+                        //           // else if (hasPunchedIn) {
+                        //           //   Fluttertoast.showToast(
+                        //           //     msg: "You have already punched in.",
+                        //           //     toastLength: Toast.LENGTH_SHORT,
+                        //           //     gravity: ToastGravity.BOTTOM,
+                        //           //     backgroundColor: Colors.red,
+                        //           //     textColor: Colors.white,
+                        //           //     fontSize: 16.0,
+                        //           //   );
+                        //           // }
+                        //         },
+                        //         child: IconButtonWidget(
+                        //           icon: Icons.login,
+                        //           label: isPunchInLoading
+                        //               ? "Punching In"
+                        //               : (hasPunchedIn
+                        //                   ? "Punched In"
+                        //                   : "Punch In"),
+                        //           iconColor:
+                        //               themeProvider.themeData.brightness ==
+                        //                       Brightness.light
+                        //                   ? Colors.green
+                        //                   : Colors.greenAccent,
+                        //           boxShadow: [
+                        //             BoxShadow(
+                        //               color:
+                        //                   themeProvider.themeData.brightness ==
+                        //                           Brightness.light
+                        //                       ? Colors.grey.withOpacity(0.5)
+                        //                       : Colors.black.withOpacity(0.3),
+                        //               spreadRadius: 2,
+                        //               blurRadius: 5,
+                        //               offset: const Offset(0, 3),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Flexible(
+                        //       child: GestureDetector(
+                        //         onTap: isPunchOutLoading || !hasPunchedIn
+                        //             ? null
+                        //             : endPunchOutTime, // Disable if not punched in
+                        //         child: Opacity(
+                        //           opacity: isPunchOutLoading || !hasPunchedIn
+                        //               ? 0.5
+                        //               : 1.0, // Reduce opacity when disabled
+                        //           child: IconButtonWidget(
+                        //             icon: Icons.logout,
+                        //             label: isPunchOutLoading
+                        //                 ? "Punching Out"
+                        //                 : "Punched Out",
+                        //             iconColor: isPunchOutLoading ||
+                        //                     !hasPunchedIn
+                        //                 ? themeProvider.themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.grey
+                        //                     : Colors.grey
+                        //                         .shade700 // Adjust color when disabled
+                        //                 : themeProvider.themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.red
+                        //                     : Colors
+                        //                         .redAccent, // Adjust icon color for dark theme
+                        //             boxShadow: [
+                        //               BoxShadow(
+                        //                 color: themeProvider
+                        //                             .themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.grey.withOpacity(0.5)
+                        //                     : Colors.black.withOpacity(0.3),
+                        //                 spreadRadius: 2,
+                        //                 blurRadius: 5,
+                        //                 offset: const Offset(0, 3),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
 
-                        const SizedBox(height: 30.0),
-                        if (hasPunchedIn) ...[
-                          const SizedBox(height: 10),
-                        ],
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Flexible(
-                              child: GestureDetector(
-                                onTap: !hasPunchedIn
-                                    ? null
-                                    : () async {
-                                        if (isTeaBreakActive) {
-                                          await handleTeaBreakEnd(); // Handle tea break end
-                                        } else {
-                                          await handleTeaBreakStart(); // Handle tea break start
-                                        }
-                                      },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 16.0),
-                                  decoration: BoxDecoration(
-                                    color: hasPunchedIn
-                                        ? (isTeaBreakActive
-                                            ? Colors.red
-                                            : Colors.green.shade800)
-                                        : Colors.grey,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.grey.withOpacity(0.5)
-                                            : Colors.black.withOpacity(0.3),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        isTeaBreakActive
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 5),
-                                      Flexible(
-                                        child: Text(
-                                          isTeaBreakActive
-                                              ? "End Tea Break"
-                                              : "Start Tea Break",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8.0),
-                            Flexible(
-                              child: GestureDetector(
-                                onTap: !hasPunchedIn
-                                    ? null
-                                    : () async {
-                                        if (isLunchBreakActive) {
-                                          await handleLunchBreakEnd();
-                                        } else {
-                                          await handleLunchBreakStart();
-                                        }
-                                      },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 8),
-                                  decoration: BoxDecoration(
-                                    color: hasPunchedIn
-                                        ? (isLunchBreakActive
-                                            ? Colors.red
-                                            : Colors.green.shade800)
-                                        : Colors.grey,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.grey.withOpacity(0.5)
-                                            : Colors.black.withOpacity(0.3),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        isLunchBreakActive
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 2.0),
-                                      Flexible(
-                                        child: Text(
-                                          isLunchBreakActive
-                                              ? "End Lunch Break"
-                                              : "Start Lunch Break",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // const SizedBox(height: 30.0),
+                        // if (hasPunchedIn) ...[
+                        //   const SizedBox(height: 10),
+                        // ],
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //   children: [
+                        //     Flexible(
+                        //       child: GestureDetector(
+                        //         onTap: !hasPunchedIn
+                        //             ? null
+                        //             : () async {
+                        //                 if (isTeaBreakActive) {
+                        //                   await handleTeaBreakEnd(); // Handle tea break end
+                        //                 } else {
+                        //                   await handleTeaBreakStart(); // Handle tea break start
+                        //                 }
+                        //               },
+                        //         child: Container(
+                        //           padding: EdgeInsets.symmetric(
+                        //               vertical: 8.0, horizontal: 16.0),
+                        //           decoration: BoxDecoration(
+                        //             color: hasPunchedIn
+                        //                 ? (isTeaBreakActive
+                        //                     ? Colors.red
+                        //                     : Colors.green.shade800)
+                        //                 : Colors.grey,
+                        //             borderRadius: BorderRadius.circular(8.0),
+                        //             boxShadow: [
+                        //               BoxShadow(
+                        //                 color: themeProvider
+                        //                             .themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.grey.withOpacity(0.5)
+                        //                     : Colors.black.withOpacity(0.3),
+                        //                 spreadRadius: 2,
+                        //                 blurRadius: 5,
+                        //                 offset: const Offset(0, 3),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //           child: Row(
+                        //             mainAxisAlignment: MainAxisAlignment.center,
+                        //             children: [
+                        //               Icon(
+                        //                 isTeaBreakActive
+                        //                     ? Icons.pause
+                        //                     : Icons.play_arrow,
+                        //                 color: Colors.white,
+                        //                 size: 20,
+                        //               ),
+                        //               SizedBox(width: 5),
+                        //               Flexible(
+                        //                 child: Text(
+                        //                   isTeaBreakActive
+                        //                       ? "End Tea Break"
+                        //                       : "Start Tea Break",
+                        //                   style: TextStyle(
+                        //                     color: Colors.white,
+                        //                     fontSize: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width *
+                        //                         0.04,
+                        //                     fontWeight: FontWeight.bold,
+                        //                   ),
+                        //                   overflow: TextOverflow.ellipsis,
+                        //                 ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 8.0),
+                        //     Flexible(
+                        //       child: GestureDetector(
+                        //         onTap: !hasPunchedIn
+                        //             ? null
+                        //             : () async {
+                        //                 if (isLunchBreakActive) {
+                        //                   await handleLunchBreakEnd();
+                        //                 } else {
+                        //                   await handleLunchBreakStart();
+                        //                 }
+                        //               },
+                        //         child: Container(
+                        //           padding: EdgeInsets.symmetric(
+                        //               vertical: 8.0, horizontal: 8),
+                        //           decoration: BoxDecoration(
+                        //             color: hasPunchedIn
+                        //                 ? (isLunchBreakActive
+                        //                     ? Colors.red
+                        //                     : Colors.green.shade800)
+                        //                 : Colors.grey,
+                        //             borderRadius: BorderRadius.circular(8.0),
+                        //             boxShadow: [
+                        //               BoxShadow(
+                        //                 color: themeProvider
+                        //                             .themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.grey.withOpacity(0.5)
+                        //                     : Colors.black.withOpacity(0.3),
+                        //                 spreadRadius: 2,
+                        //                 blurRadius: 5,
+                        //                 offset: const Offset(0, 3),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //           child: Row(
+                        //             // mainAxisAlignment: MainAxisAlignment.center,
+                        //             children: [
+                        //               Icon(
+                        //                 isLunchBreakActive
+                        //                     ? Icons.pause
+                        //                     : Icons.play_arrow,
+                        //                 color: Colors.white,
+                        //                 size: 20,
+                        //               ),
+                        //               SizedBox(width: 2.0),
+                        //               Flexible(
+                        //                 child: Text(
+                        //                   isLunchBreakActive
+                        //                       ? "End Lunch Break"
+                        //                       : "Start Lunch Break",
+                        //                   style: TextStyle(
+                        //                     color: Colors.white,
+                        //                     fontSize: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width *
+                        //                         0.04,
+                        //                     fontWeight: FontWeight.bold,
+                        //                   ),
+                        //                   overflow: TextOverflow.ellipsis,
+                        //                 ),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
 
                         const SizedBox(height: 10.0),
                         Container(

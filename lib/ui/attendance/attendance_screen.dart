@@ -47,7 +47,7 @@ class _AttendanceState extends State<Attendance> {
         isLoading = true;
       });
 
-      final result = await ApiService.getTimeLog(email, year, month);
+      final result = await ApiService.getTimeLog(email, year, month, context);
 
       if (!mounted)
         return; // Ensure the widget is still in the widget tree before calling setState

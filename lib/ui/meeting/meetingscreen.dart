@@ -23,7 +23,7 @@ class _MeetingListScreenState extends State<MeetingListScreen> {
   @override
   void initState() {
     super.initState();
-    _meetingsFuture = ApiService.getMeetings(widget.email!);
+    _meetingsFuture = ApiService.getMeetings(widget.email!, context);
   }
 
   @override
@@ -196,7 +196,8 @@ class _MeetingListScreenState extends State<MeetingListScreen> {
                     meeting: meeting,
                     onMeetingUpdated: () {
                       setState(() {
-                        _meetingsFuture = ApiService.getMeetings(widget.email!);
+                        _meetingsFuture =
+                            ApiService.getMeetings(widget.email!, context);
                       });
                     },
                   ),

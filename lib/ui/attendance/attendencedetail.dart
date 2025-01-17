@@ -39,8 +39,8 @@ class _AttendanceDetailsScreenState extends State<AttendanceDetailsScreen> {
 
     final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDay);
     try {
-      final data =
-          await ApiService.getAttendanceDetails(widget.email!, formattedDate);
+      final data = await ApiService.getAttendanceDetails(
+          context, widget.email!, formattedDate);
       setState(() {
         // Assuming the response is a list, get the first item in the list
         attendanceData = data?.isNotEmpty == true ? data![0].toJson() : null;

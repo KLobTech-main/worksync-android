@@ -26,7 +26,8 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   Future<void> _loadAnnouncements() async {
     try {
-      final data = await ApiService().fetchAnnouncements(widget.userEmail);
+      final data =
+          await ApiService().fetchAnnouncements(widget.userEmail, context);
       setState(() {
         _announcements = data;
       });
@@ -39,7 +40,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     try {
       // Call the existing method from api.dart
       await ApiService()
-          .markNotificationAsRead(notificationId, widget.userEmail);
+          .markNotificationAsRead(notificationId, widget.userEmail, context);
       // Re-fetch announcements to update the UI
       setState(() {
         _announcements[index]['read'] = true;

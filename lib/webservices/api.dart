@@ -6,8 +6,10 @@ import 'package:dass/screens/attendance_details_model.dart';
 import 'package:dass/screens/attendance_request_model.dart';
 import 'package:dass/screens/attendance_summary_model.dart';
 import 'package:dass/screens/daily_log_model.dart';
+import 'package:dass/ui/auth/login.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -132,14 +134,17 @@ class ApiService {
   }
 
   /// GET: Fetch tasks assigned by a specific user(Get Assigned Task)
-  static Future<List<dynamic>> getAssignedTasks(String assignedBy) async {
+  static Future<List<dynamic>> getAssignedTasks(
+      BuildContext context, String assignedBy) async {
     final String url = "$_baseUrl/tasks/get-assigned-tasks?email=$assignedBy";
     print("CURL Command:");
     print("curl -X GET $url -H 'Content-Type: application/json' -d");
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -157,13 +162,16 @@ class ApiService {
   }
 
   ///GET: Fetch tasks assigned by a specific user(Get Given Task)
-  static Future<List<dynamic>> getGivenTasks(String assignedTo) async {
+  static Future<List<dynamic>> getGivenTasks(
+      BuildContext context, String assignedTo) async {
     final String url = "$_baseUrl/tasks/get-given-tasks?assignedTo=$assignedTo";
     print("CURL Command:");
     print("curl -X GET $url -H 'Content-Type: application/json' -d");
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -208,10 +216,10 @@ class ApiService {
   }
 
   ///post Create Meeting
-  Future<http.Response> createMeeting(
+  Future<http.Response> createMeeting(String email, BuildContext context,
       Map<String, dynamic> meetingDetails) async {
     final url = Uri.parse(
-        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/meetings?email=siddhisaboo1429%40gmail.com');
+        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/meetings?email=$email');
 
     // Check if token exists
     if (_authToken == null || _authToken!.isEmpty) {
@@ -219,8 +227,10 @@ class ApiService {
     }
 
     try {
-      final response = await http.post(
-        url,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -235,11 +245,14 @@ class ApiService {
   }
 
   /// GET: get Meetings
-  static Future<List<dynamic>> getMeetingByEmail(String email) async {
+  static Future<List<dynamic>> getMeetingByEmail(
+      BuildContext context, String email) async {
     final String url = "$_baseUrl/users/get/user?email=$email";
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -256,13 +269,15 @@ class ApiService {
   }
 
   ///fetch Participants
-  static Future<List<String>> fetchParticipants() async {
+  static Future<List<String>> fetchParticipants(BuildContext context) async {
     final String url = '$_baseUrl/admin/api/get-all-users';
     print("CURL Command:");
     print("curl -X GET $url -H 'Content-Type: application/json' -d");
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -285,7 +300,7 @@ class ApiService {
 
   /// POST: Create a new ticket
   static Future<http.Response> createTicket(
-      Map<String, dynamic> ticketData) async {
+      BuildContext context, Map<String, dynamic> ticketData) async {
     final String url = "$_baseUrl/tickets";
     final headers = {"Content-Type": "application/json"};
     final body = json.encode(ticketData);
@@ -294,8 +309,10 @@ class ApiService {
     print("curl -X POST $url -H 'Content-Type: application/json' -d '$body'");
     // final String url = "$_baseUrl/tickets";
     try {
-      final response = await http.post(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -309,11 +326,14 @@ class ApiService {
   }
 
   /// GET: get all tickets
-  static Future<List<dynamic>> getTickets(String email) async {
+  static Future<List<dynamic>> getTickets(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/tickets/$email";
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -331,7 +351,8 @@ class ApiService {
     }
   }
 
-  static Future<List<dynamic>> getAllUsers(String email) async {
+  static Future<List<dynamic>> getAllUsers(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/users/get-all-users?email=$email";
 
     print("CURL Command:");
@@ -339,8 +360,10 @@ class ApiService {
         "curl -X GET $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken'");
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -358,7 +381,7 @@ class ApiService {
   }
 
   static Future<List<AllUsers>> getAllUsersEmergencyContact(
-      String email) async {
+      BuildContext context, String email) async {
     final String url = "$_baseUrl/users/get-all-users?email=$email";
 
     print("CURL Command:");
@@ -366,8 +389,10 @@ class ApiService {
         "curl -X GET $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken'");
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -390,17 +415,19 @@ class ApiService {
     }
   }
 
-  static Future<List<dynamic>> getAllUsersName() async {
-    final String url =
-        "$_baseUrl/users/get-all-users?email=siddhisaboo1429@gmail.com";
+  static Future<List<dynamic>> getAllUsersName(
+      String email, BuildContext context) async {
+    final String url = "$_baseUrl/users/get-all-users?email=$email";
 
     print("CURL Command:");
     print(
         "curl -X GET $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken'");
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -435,7 +462,8 @@ class ApiService {
     }
   }
 
-  static Future<void> createTask({
+  static Future<void> createTask(
+    BuildContext context, {
     required String? assignedBy,
     required String assignedTo,
     required String title,
@@ -452,8 +480,10 @@ class ApiService {
         "'{\"assignedBy\":\"$assignedBy\", \"assignedTo\":\"$assignedTo\", \"title\":\"$title\", \"description\":\"$description\", \"deadLine\":\"$deadLine\", \"status\":\"$status\"}'");
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -480,13 +510,16 @@ class ApiService {
     }
   }
 
-  static Future<List<MeetingModal>> getMeetings(String participantEmail) async {
+  static Future<List<MeetingModal>> getMeetings(
+      String participantEmail, BuildContext context) async {
     final String url =
         "$_baseUrl/meetings/participant?participant=$participantEmail";
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -505,7 +538,7 @@ class ApiService {
   }
 
   static Future<bool> postEmergencyContact(
-      String email, EmergencyContact contact) async {
+      String email, EmergencyContact contact, BuildContext context) async {
     final String url = "$_baseUrl/users/emergency/contact?email=$email";
 
     try {
@@ -520,8 +553,11 @@ class ApiService {
           contact.toJson()); // Using toJson from EmergencyContactDetails
 
       // Make the POST request
-      final response = await http.post(
-        Uri.parse(url),
+
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
         headers: headers,
         body: body,
       );
@@ -537,7 +573,8 @@ class ApiService {
     }
   }
 
-  static Future<bool> deleteEmergencyContact(String email, String name) async {
+  static Future<bool> deleteEmergencyContact(
+      String email, String name, BuildContext context) async {
     final String url =
         "$_baseUrl/users/emergency/contact?email=$email&contactName=$name";
 
@@ -546,8 +583,10 @@ class ApiService {
       print(
           "curl -X DELETE '$url' -H 'Content-Type: application/json' -H 'Authorization: $_authToken'");
 
-      final response = await http.delete(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'DELETE',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -565,7 +604,8 @@ class ApiService {
     }
   }
 
-  static Future<void> submitBankDetails({
+  static Future<void> submitBankDetails(
+    BuildContext context, {
     required String email,
     required Map<String, String> bankDetails,
   }) async {
@@ -576,8 +616,10 @@ class ApiService {
         "curl -X POST $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken' -d '${jsonEncode(bankDetails)}'");
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -596,12 +638,15 @@ class ApiService {
     }
   }
 
-  static Future<BankDetails?> getUserBankDetailsByEmail(String email) async {
+  static Future<BankDetails?> getUserBankDetailsByEmail(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/users/get-all-users?email=$email";
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -634,8 +679,8 @@ class ApiService {
     }
   }
 
-  static Future<void> updateAddress(
-      String email, String currentAddress, String permanentAddress) async {
+  static Future<void> updateAddress(String email, String currentAddress,
+      String permanentAddress, BuildContext context) async {
     final String url = "$_baseUrl/users/address?email=$email";
     final payload = {
       "currentAddress": currentAddress,
@@ -648,8 +693,10 @@ class ApiService {
           '-H "Authorization: $_authToken" -d \'${jsonEncode(payload)}\'';
       print("\n--- cURL Command for POST ---\n$curl\n");
 
-      final response = await http.post(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -673,7 +720,8 @@ class ApiService {
   }
 
   // Get User By Email API
-  static Future<GetUserByEmailModel?> getUserByEmail(String email) async {
+  static Future<GetUserByEmailModel?> getUserByEmail(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/users/get/user?email=$email";
 
     try {
@@ -682,8 +730,10 @@ class ApiService {
           '-H "Authorization: $_authToken"';
       print("\n--- cURL Command for GET ---\n$curl\n");
 
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -751,15 +801,19 @@ class ApiService {
     }
   }
 
-  static Future<List<GetAllMeeting>> getAllMeetings() async {
+  static Future<List<GetAllMeeting>> getAllMeetings(
+      BuildContext context) async {
     try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/meetings'),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: '$_baseUrl/meetings',
+        method: 'GET',
         headers: {
           'Authorization': _authToken!, // Add your authorization token here
           'Content-Type': 'application/json',
         },
       );
+
       print('Request URL: ${response.request?.url}');
       print('Response Status: ${response.statusCode}');
       print('Response Body: ${response.body}');
@@ -779,13 +833,16 @@ class ApiService {
     }
   }
 
-  static Future<List<DocumentsModel>> fetchDocuments(String email) async {
+  static Future<List<DocumentsModel>> fetchDocuments(
+      String email, BuildContext context) async {
     try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/documents/?email=$email'),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: '$_baseUrl/documents/?email=$email',
+        method: 'GET',
         headers: {
-          'Authorization': _authToken!,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
         },
       );
 
@@ -843,16 +900,19 @@ class ApiService {
     }
   }
 
-  Future<List<PaySlipModel>> getPaySlips(String email) async {
+  Future<List<PaySlipModel>> getPaySlips(
+      String email, BuildContext context) async {
     final url =
         'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/payslip/?email=$email';
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
-          'Authorization': _authToken!,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
         },
       );
       print('Request URL: ${response.request?.url}');
@@ -874,16 +934,19 @@ class ApiService {
     }
   }
 
-  Future<JobHistoryModel?> getJobHistory(String email) async {
+  Future<JobHistoryModel?> getJobHistory(
+      String email, BuildContext context) async {
     final url =
         'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/jobHistory/?email=$email';
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
-          'Authorization': _authToken!, // Add the Authorization token here
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
         },
       );
 
@@ -918,16 +981,17 @@ class ApiService {
   }
 
   Future<List<AssetsModel>> fetchAssets(
-    String email,
-  ) async {
+      String email, BuildContext context) async {
     final url = '$_baseUrl/assets/?email=$email';
 
     try {
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
-          'Authorization': _authToken!,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
         },
       );
 
@@ -955,11 +1019,8 @@ class ApiService {
   }
 
   /// Punch In
-  static Future<http.Response> punchIn(
-    Map<String, dynamic> punchIn,
-    String punchInTime,
-    String email,
-  ) async {
+  static Future<http.Response> punchIn(Map<String, dynamic> punchIn,
+      String punchInTime, String email, BuildContext context) async {
     // Use dynamic email and punch-in time in the URL
     String url =
         "$_baseUrl/attendance/punch-in?punchInTime=$punchInTime&email=$email";
@@ -981,10 +1042,14 @@ class ApiService {
         "curl -X POST $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken' -d '$body'");
 
     try {
-      // Perform the API call
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: body,
       );
 
@@ -1000,11 +1065,11 @@ class ApiService {
   ///Tea Start Time
   /// Tea Start Time API
   static Future<http.Response> teaStart(
-    Map<String, dynamic> punchIn,
-    String email,
-    String punchInId,
-    String teaStartTime,
-  ) async {
+      Map<String, dynamic> punchIn,
+      String email,
+      String punchInId,
+      String teaStartTime,
+      BuildContext context) async {
     // Ensure the base URL is correctly defined
     String url =
         "$_baseUrl/attendance/tea-start?teaStartTime=$teaStartTime&email=$email&id=$punchInId";
@@ -1019,9 +1084,14 @@ class ApiService {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: json.encode(punchIn),
       );
 
@@ -1036,8 +1106,12 @@ class ApiService {
   }
 
   ///Tea End Time
-  static Future<http.Response> teaEnd(Map<String, dynamic> punchIn,
-      String email, String punchInId, String teaEndTime) async {
+  static Future<http.Response> teaEnd(
+      Map<String, dynamic> punchIn,
+      String email,
+      String punchInId,
+      String teaEndTime,
+      BuildContext context) async {
     String url =
         "$_baseUrl/attendance/tea-end?teaEndTime=$teaEndTime&email=$email&id=$punchInId";
 
@@ -1050,9 +1124,14 @@ class ApiService {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: json.encode(punchIn),
       );
 
@@ -1065,8 +1144,12 @@ class ApiService {
   }
 
   ///Start Lunch Break
-  static Future<http.Response> startLunchBreak(Map<String, dynamic> punchIn,
-      String email, String punchInId, String lunchStartTime) async {
+  static Future<http.Response> startLunchBreak(
+      Map<String, dynamic> punchIn,
+      String email,
+      String punchInId,
+      String lunchStartTime,
+      BuildContext context) async {
     String url =
         "$_baseUrl/attendance/lunch-start?lunchStartTime=$lunchStartTime&email=$email&id=$punchInId";
 
@@ -1095,9 +1178,14 @@ class ApiService {
     print(curlCommand);
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: json.encode(punchIn),
       );
 
@@ -1119,8 +1207,12 @@ class ApiService {
   }
 
   ///Start Lunch Break
-  static Future<http.Response> endLunchBreak(Map<String, dynamic> punchIn,
-      String email, String punchInId, String lunchEndTime) async {
+  static Future<http.Response> endLunchBreak(
+      Map<String, dynamic> punchIn,
+      String email,
+      String punchInId,
+      String lunchEndTime,
+      BuildContext context) async {
     String url =
         "$_baseUrl/attendance/lunch-end?lunchEndTime=$lunchEndTime&email=$email&id=$punchInId";
 
@@ -1134,9 +1226,14 @@ class ApiService {
     print("token:$_authToken");
 
     try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: json.encode(punchIn),
       );
 
@@ -1148,8 +1245,13 @@ class ApiService {
   }
 
   ///Punch OUt
-  static Future<http.Response> punchOut(Map<String, dynamic> punchOutData,
-      String email, String punchInId, String name, String punchOutTime) async {
+  static Future<http.Response> punchOut(
+      Map<String, dynamic> punchOutData,
+      String email,
+      String punchInId,
+      String name,
+      String punchOutTime,
+      BuildContext context) async {
     String url =
         "$_baseUrl/attendance?punchOutTime=$punchOutTime&email=$email&name=$name&id=$punchInId";
 
@@ -1175,10 +1277,14 @@ class ApiService {
     // Debugging: Print the CURL equivalent for troubleshooting
 
     try {
-      // Perform the API call
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: json.encode(punchOutData),
       );
 
@@ -1194,7 +1300,7 @@ class ApiService {
   ///TimeLog
   /// TimeLog
   static Future<TimeLogModelNew?> getTimeLog(
-      String email, String year, String month) async {
+      String email, String year, String month, BuildContext context) async {
     final String url = "$_baseUrl/attendance/monthly/$email/$year/$month";
 
     try {
@@ -1208,10 +1314,15 @@ class ApiService {
       // Print the curl command
       print("CURL Command: $curlCommand");
 
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": " $_authToken", // Add Bearer token
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       print("Token: $_authToken");
       print('Response status code: ${response.statusCode}');
@@ -1238,15 +1349,20 @@ class ApiService {
   }
 
 //Attendance Request
-  static Future<List<AttendanceRequestModel>> getAttendanceRequest(
-      String email, String startDate, String endDate) async {
+  static Future<List<AttendanceRequestModel>> getAttendanceRequest(String email,
+      String startDate, String endDate, BuildContext context) async {
     final String url =
         "$_baseUrl/attendance/range?email=$email&startDate=$startDate&endDate=$endDate";
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": _authToken!,
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -1266,8 +1382,7 @@ class ApiService {
 
   ///Attendance summary
   static Future<List<AttendanceSummaryModel>> getAttendanceSummary(
-    String email,
-  ) async {
+      String email, BuildContext context) async {
     final url = "$_baseUrl/attendance/$email?email=$email";
 
     try {
@@ -1281,8 +1396,10 @@ class ApiService {
       // Print the curl command
       print("CURL Command: $curlCommand");
 
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -1306,14 +1423,19 @@ class ApiService {
   }
 
   ///Daily Log
-  static Future<DailyLogModel?> getDailyLog(String email, String date) async {
+  static Future<DailyLogModel?> getDailyLog(
+      String email, String date, BuildContext context) async {
     final String url = "$_baseUrl/attendance/day?email=$email&date=$date";
-
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": _authToken!,
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
 
@@ -1338,13 +1460,18 @@ class ApiService {
   ///AttendanceDetails
 
   static Future<List<AttendanceDetailsModel>?> getAttendanceDetails(
-      String email, String date) async {
+      BuildContext context, String email, String date) async {
     final String url = "$_baseUrl/attendance/day?email=$email&date=$date";
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": _authToken!,
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -1365,16 +1492,19 @@ class ApiService {
   ///leavestatus
 
   static Future<List<Map<String, dynamic>>> getLeaveStatus(
-    String email,
-    String date,
-  ) async {
+      String email, String date, BuildContext context) async {
     final String url =
         "$_baseUrl/leaves/$email?email=$email"; // Ensure this URL is correct
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": _authToken!,
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       // Print response details
       print('Response status code: ${response.statusCode}');
@@ -1406,13 +1536,19 @@ class ApiService {
 
   ///leavesummary
 
-  static Future<Map<String, dynamic>?> getLeaveSummary(String email) async {
+  static Future<Map<String, dynamic>?> getLeaveSummary(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/users/get/user?email=$email";
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": _authToken!,
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -1429,13 +1565,21 @@ class ApiService {
     }
   }
 
-  Future<List<dynamic>> fetchNotifications(String recipientEmail) async {
+  Future<List<dynamic>> fetchNotifications(
+      String recipientEmail, BuildContext context) async {
     final url =
         Uri.parse('$_baseUrl/notification?recipientEmail=$recipientEmail');
-    final response = await http.get(url, headers: {
-      'Authorization': _authToken!,
-      'Content-Type': 'application/json',
-    });
+
+    final response = await ApiService.makeRequest(
+      context: context,
+      url: url.toString(),
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": _authToken!,
+      },
+    );
+
     print("GET Response Code: ${response.statusCode}");
     print("GET Response Body: ${response.body}");
     if (response.statusCode == 200) {
@@ -1446,14 +1590,20 @@ class ApiService {
     }
   }
 
-  Future<void> markNotificationAsRead(
-      String notificationId, String recipientEmail) async {
+  Future<void> markNotificationAsRead(String notificationId,
+      String recipientEmail, BuildContext context) async {
     final url = Uri.parse(
         '$_baseUrl/notification/$notificationId/read?recipientEmail=$recipientEmail');
-    final response = await http.patch(url, headers: {
-      'Authorization': _authToken!,
-      'Content-Type': 'application/json',
-    });
+
+    final response = await ApiService.makeRequest(
+      context: context,
+      url: url.toString(),
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": _authToken!,
+      },
+    );
     print("PATCH Response Code: ${response.statusCode}");
     print("PATCH Response Body: ${response.body}");
     if (response.statusCode == 200) {
@@ -1464,7 +1614,8 @@ class ApiService {
     }
   }
 
-  Future<bool> resetPassword(String email, String newPassword) async {
+  Future<bool> resetPassword(
+      String email, String newPassword, BuildContext context) async {
     final url = Uri.parse('$_baseUrl/users/reset/password');
     try {
       print('API URL: $url'); // Print the API URL
@@ -1473,11 +1624,13 @@ class ApiService {
             'newPassword': newPassword
           })}'); // Print the request body
 
-      final response = await http.post(
-        url,
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': _authToken!, // Ensure _authToken is not null
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
         },
         body: jsonEncode({
           'email': email,
@@ -1501,16 +1654,19 @@ class ApiService {
     }
   }
 
-  Future<List<dynamic>> fetchAnnouncements(String userEmail) async {
+  Future<List<dynamic>> fetchAnnouncements(
+      String userEmail, BuildContext context) async {
     final String endpoint =
         '$_baseUrl/notification/type?recipientType=USER&userEmail=$userEmail';
 
     try {
-      final response = await http.get(
-        Uri.parse(endpoint),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: endpoint,
+        method: 'GET',
         headers: {
-          'Authorization': _authToken!,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
         },
       );
 
@@ -1528,16 +1684,20 @@ class ApiService {
     }
   }
 
-  Future<http.Response> submitFeedback({
+  Future<http.Response> submitFeedback(
+    BuildContext context, {
     required String email,
     required String description,
   }) async {
     final url = Uri.parse('$_baseUrl/feedback');
-    final response = await http.post(
-      url,
+
+    final response = await ApiService.makeRequest(
+      context: context,
+      url: url.toString(),
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': _authToken!,
+        "Content-Type": "application/json",
+        "Authorization": _authToken!,
       },
       body: jsonEncode({
         'email': email,
@@ -1548,7 +1708,8 @@ class ApiService {
     return response;
   }
 
-  static Future<http.Response> editTicket({
+  static Future<http.Response> editTicket(
+    BuildContext context, {
     required String ticketId,
     required String title,
     required String description,
@@ -1557,10 +1718,13 @@ class ApiService {
     final uri = Uri.parse(
         '$_baseUrl/tickets/edit?ticketId=$ticketId&title=${Uri.encodeComponent(title)}&description=${Uri.encodeComponent(description)}&priority=$priority');
 
-    final response = await http.patch(
-      uri,
+    final response = await ApiService.makeRequest(
+      context: context,
+      url: uri.toString(),
+      method: 'PATCH',
       headers: {
-        'Authorization': _authToken!,
+        "Content-Type": "application/json",
+        "Authorization": _authToken!,
       },
     );
     return response;
@@ -1568,15 +1732,17 @@ class ApiService {
 
   // API for rescheduling a meeting
   static Future<void> rescheduleMeeting(
-      String meetingId, String newTime) async {
+      BuildContext context, String meetingId, String newTime) async {
     final String url = "$_baseUrl/meetings/reschedule";
     print("CURL Command:");
     print(
         "curl -X PUT $url -H 'Content-Type: application/json' -d '{\"meetingId\": \"$meetingId\", \"newTime\": \"$newTime\"}'");
 
     try {
-      final response = await http.put(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'PUT',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -1599,15 +1765,16 @@ class ApiService {
 
 // API for updating meeting status
   static Future<void> updateMeetingStatus(
-      String meetingId, String status) async {
+      BuildContext context, String meetingId, String status) async {
     final String url = "$_baseUrl/meetings/status";
     print("CURL Command:");
     print(
         "curl -X PATCH $url -H 'Content-Type: application/json' -d '{\"meetingId\": \"$meetingId\", \"status\": \"$status\"}'");
-
     try {
-      final response = await http.patch(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'PATCH',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -1630,7 +1797,8 @@ class ApiService {
   }
 
 // API for editing meeting details
-  static Future<http.Response> editMeeting({
+  static Future<http.Response> editMeeting(
+    BuildContext context, {
     required String meetingId,
     required String meetingTitle,
     required String description,
@@ -1645,14 +1813,15 @@ class ApiService {
     print("curl -X PATCH $url -H 'Content-Type: application/json'");
 
     try {
-      final response = await http.patch(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'PATCH',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
         },
       );
-
       if (response.statusCode == 200) {
         print("Meeting details updated successfully.");
         return response; // return the response here
@@ -1665,14 +1834,22 @@ class ApiService {
     }
   }
 
-  static Future<bool> forgotPassword(String email) async {
+  static Future<bool> forgotPassword(String email, BuildContext context) async {
     final url = Uri.parse("$_baseUrl/users/forgot-password?email=$email");
 
     try {
       print("Request URL: $url");
       print("cURL Command: curl -X POST '$url'");
 
-      final response = await http.post(url);
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       print("Response Status Code: ${response.statusCode}");
       print("Response Body: ${response.body}");
@@ -1689,8 +1866,8 @@ class ApiService {
     }
   }
 
-  static Future<bool> resetForgotPassword(
-      String email, String otp, String newPassword) async {
+  static Future<bool> resetForgotPassword(String email, String otp,
+      String newPassword, BuildContext context) async {
     final url = Uri.parse("$_baseUrl/users/reset-password");
     final body = {
       "email": email,
@@ -1699,9 +1876,14 @@ class ApiService {
     };
 
     try {
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
         body: json.encode(body),
       );
 
@@ -1717,43 +1899,56 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, dynamic>?> getAttendanceStatus(String email) async {
+  static Future<Map<String, dynamic>?> getAttendanceStatus(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/attendance/status?email=$email";
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        "Content-Type": "application/json",
-        "Authorization": _authToken!,
-      });
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return {"statusCode": 200, "body": json.decode(response.body)};
+      } else if (response.statusCode == 404) {
+        return {"statusCode": 404, "body": null};
       } else {
         debugPrint('Error: ${response.statusCode}');
-        return null;
+        return {"statusCode": response.statusCode, "body": null};
       }
     } catch (e) {
-      debugPrint('Error fetching leave summary: $e');
+      debugPrint('Error fetching attendance status: $e');
       return null;
     }
   }
 
   static Future<void> editTask(String taskId, String assignedTo, String title,
-      String description, String deadline) async {
+      String description, String deadline, BuildContext context) async {
     final url = Uri.parse(
         '$_baseUrl/tasks/edit?taskId=$taskId&assignedTo=$assignedTo&title=$title&description=$description&deadLine=$deadline');
-    final headers = {
-      'Authorization': _authToken!,
-    };
 
     // Generating curl command for debugging
     String curlCommand =
         '''curl -X PATCH "$url" -H "accept: /" -H "Authorization: $_authToken"''';
     print("Generated curl command:\n$curlCommand");
 
-    final response = await http.patch(url, headers: headers);
+    final response = await ApiService.makeRequest(
+      context: context,
+      url: url.toString(),
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": _authToken!,
+      },
+    );
 
     // Printing the response code and body
     print('Response code: ${response.statusCode}');
@@ -1764,15 +1959,20 @@ class ApiService {
     }
   }
 
-  static Future<List<Map<String, String>>> fetchAllUsers(String email) async {
+  static Future<List<Map<String, String>>> fetchAllUsers(
+      String email, BuildContext context) async {
     final url =
         Uri.parse('$_baseUrl/users/get-all-users-name-email?email=$email');
-    final headers = {
-      'Authorization': _authToken!,
-    };
-
     try {
-      final response = await http.get(url, headers: headers);
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
 
       // Print the status code and body to debug
       print('Response Status: ${response.statusCode}');
@@ -1795,20 +1995,25 @@ class ApiService {
     }
   }
 
-  static Future<void> extendDeadline(
-      String taskId, String newDeadline, String reason) async {
+  static Future<void> extendDeadline(String taskId, String newDeadline,
+      String reason, BuildContext context) async {
     final url = Uri.parse(
         '$_baseUrl/tasks/deadline-extension/request?taskId=$taskId&newDeadline=$newDeadline&reason=$reason');
-    final headers = {
-      'Authorization': _authToken!,
-    };
 
     // Generating curl command for debugging
     String curlCommand =
         '''curl -X POST "$url" -H "accept: /" -H "Authorization: $_authToken"''';
     print("Generated curl command:\n$curlCommand");
 
-    final response = await http.post(url, headers: headers);
+    final response = await ApiService.makeRequest(
+      context: context,
+      url: url.toString(),
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": _authToken!,
+      },
+    );
 
     // Printing the response code and body
     print('Response code: ${response.statusCode}');
@@ -1819,7 +2024,8 @@ class ApiService {
     }
   }
 
-  static Future<LeaveSummaryModel?> getLeave(String email) async {
+  static Future<LeaveSummaryModel?> getLeave(
+      String email, BuildContext context) async {
     final String url = "$_baseUrl/users/get/user?email=$email";
 
     try {
@@ -1828,8 +2034,10 @@ class ApiService {
           '-H "Authorization: $_authToken"';
       print("\n--- cURL Command for GET ---\n$curl\n");
 
-      final response = await http.get(
-        Uri.parse(url),
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
@@ -1853,5 +2061,96 @@ class ApiService {
       print("\nError during GET: $e");
       return null;
     }
+  }
+
+  static Future<Map<String, dynamic>> fetchAttendanceStatus(
+      String email, BuildContext context) async {
+    final url = Uri.parse('$_baseUrl/attendance/status?email=$email');
+    try {
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return {'status': 'success', 'message': data['message']};
+      } else if (response.statusCode == 404) {
+        final data = json.decode(response.body);
+        return {'status': 'error', 'message': data['message']};
+      } else {
+        return {'status': 'error', 'message': 'Unexpected error occurred'};
+      }
+    } catch (e) {
+      return {'status': 'error', 'message': 'Failed to connect to server'};
+    }
+  }
+
+  static Future<http.Response> makeRequest({
+    required BuildContext context,
+    required String url,
+    required String method,
+    Map<String, String>? headers,
+    Object? body,
+  }) async {
+    try {
+      final uri = Uri.parse(url);
+      late http.Response response;
+
+      // Make the API request based on the method (GET, POST, etc.)
+      if (method == 'GET') {
+        response = await http.get(uri, headers: headers);
+      } else if (method == 'POST') {
+        response = await http.post(uri, headers: headers, body: body);
+      } else if (method == 'PUT') {
+        response = await http.put(uri, headers: headers, body: body);
+      } else if (method == 'DELETE') {
+        response = await http.delete(uri, headers: headers);
+      } else if (method == 'PATCH') {
+        response = await http.patch(uri, headers: headers);
+      }
+
+      // If the response status is 401, show the logout dialog
+      if (response.statusCode == 401) {
+        _handleTokenExpired(context);
+      }
+
+      return response; // Return the response to the caller
+    } catch (e) {
+      // Handle connection or server errors
+      return http.Response(
+          jsonEncode({'error': 'Network error occurred'}), 500);
+    }
+  }
+
+  // Function to handle token expiration
+  static void _handleTokenExpired(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent user from dismissing the dialog
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Session Expired'),
+          content: const Text('Your session has expired. Please log in again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Navigate to login screen and clear navigation stack
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LogIn()),
+                  (route) => false,
+                );
+              },
+              child: const Text('Log Out'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

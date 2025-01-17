@@ -20,7 +20,7 @@ class _JobHistoryScreenState extends State<JobHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    jobHistoryFuture = ApiService().getJobHistory(widget.email);
+    jobHistoryFuture = ApiService().getJobHistory(widget.email, context);
   }
 
   @override

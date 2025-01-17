@@ -44,7 +44,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
   Future<void> _fetchUsers() async {
     try {
       List<Map<String, String>> users =
-          await ApiService.fetchAllUsers(widget.assignedTo);
+          await ApiService.fetchAllUsers(widget.assignedTo, context);
       setState(() {
         _users = users;
         _isLoading = false;

@@ -204,7 +204,6 @@ class _LogInState extends State<LogIn> {
     setState(() {
       _isLoading = true;
     });
-
     try {
       final response = await ApiService.loginUser(
         _emailController.text.trim(),
@@ -302,7 +301,7 @@ class _LogInState extends State<LogIn> {
   }
 
   void _showDialog({required String title, required String message}) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) {
@@ -321,7 +320,7 @@ class _LogInState extends State<LogIn> {
   }
 
   void _showToast(String message) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     Fluttertoast.showToast(
       timeInSecForIosWeb: 3,
       msg: message,
@@ -387,7 +386,7 @@ class _LogInState extends State<LogIn> {
           TextButton(
             onPressed: () async {
               final email = emailController.text.trim();
-              final isSuccess = await ApiService.forgotPassword(email);
+              final isSuccess = await ApiService.forgotPassword(email, context);
 
               if (isSuccess) {
                 Navigator.pop(context); // Close the dialog
@@ -441,7 +440,7 @@ class _LogInState extends State<LogIn> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
           ? Colors.white
@@ -661,7 +660,7 @@ class _LogInState extends State<LogIn> {
     String label,
     IconData icon,
   ) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return InputDecoration(
       labelText: label,
 

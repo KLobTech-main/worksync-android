@@ -266,7 +266,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     final otp = otpController.text.trim();
                     final newPassword = newPasswordController.text.trim();
                     final isSuccess = await ApiService.resetForgotPassword(
-                        email, otp, newPassword);
+                        email, otp, newPassword, context);
 
                     if (isSuccess) {
                       Fluttertoast.showToast(

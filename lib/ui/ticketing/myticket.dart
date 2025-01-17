@@ -35,7 +35,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
   Future<List<dynamic>> _fetchTickets() async {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     try {
-      return await ApiService.getTickets(widget.email!);
+      return await ApiService.getTickets(widget.email!, context);
     } catch (e) {
       print("Error fetching tickets: $e");
 
@@ -212,11 +212,11 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
 
                 try {
                   final response = await ApiService.editTicket(
-                    ticketId: ticket['id'],
-                    title: _titleController.text,
-                    description: _descriptionController.text,
-                    priority: _priority,
-                  );
+                      ticketId: ticket['id'],
+                      title: _titleController.text,
+                      description: _descriptionController.text,
+                      priority: _priority,
+                      context);
 
                   if (response.statusCode == 200) {
                     // Close the dialog

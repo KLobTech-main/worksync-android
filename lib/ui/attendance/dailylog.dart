@@ -37,7 +37,7 @@ class _DailyLogScreenState extends State<DailyLogScreen> {
           "Fetching attendance with email: ${widget.email} and date: $todayDate");
 
       final result =
-          await ApiService.getDailyLog(widget.email ?? '', todayDate);
+          await ApiService.getDailyLog(widget.email ?? '', todayDate, context);
 
       return result;
     } catch (e, stackTrace) {

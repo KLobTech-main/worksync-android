@@ -57,7 +57,7 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
       try {
         // Call the API without expecting a return value.
         await ApiService.rescheduleMeeting(
-            widget.meeting.id ?? '', newTimeString);
+            context, widget.meeting.id ?? '', newTimeString);
 
         Fluttertoast.showToast(
           msg: "Meeting rescheduled successfully!",
@@ -84,7 +84,7 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
       }
       try {
         await ApiService.rescheduleMeeting(
-            widget.meeting.id ?? '', newTimeString);
+            context, widget.meeting.id ?? '', newTimeString);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Meeting rescheduled successfully!')),
         );
@@ -103,7 +103,8 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     try {
       // Call the API without expecting a return value.
-      await ApiService.updateMeetingStatus(widget.meeting.id ?? '', status);
+      await ApiService.updateMeetingStatus(
+          context, widget.meeting.id ?? '', status);
 
       Fluttertoast.showToast(
         msg: "Meeting status updated to $status",

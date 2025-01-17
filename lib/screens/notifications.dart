@@ -37,7 +37,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   void fetchNotifications() async {
     try {
-      final data = await apiService.fetchNotifications(widget.recipientEmail);
+      final data =
+          await apiService.fetchNotifications(widget.recipientEmail, context);
       setState(() {
         notifications = data;
         isLoading = false;
@@ -99,7 +100,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     // Then make the API call
     try {
       await apiService.markNotificationAsRead(
-          notificationId, widget.recipientEmail);
+          notificationId, widget.recipientEmail, context);
     } catch (e) {
       print("Error marking notification as read: $e");
     }

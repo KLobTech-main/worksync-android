@@ -62,7 +62,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
         });
       }
 
-      final result = await ApiService.getAttendanceSummary(email);
+      final result = await ApiService.getAttendanceSummary(email, context);
       print('Raw API Response: $result'); // Log raw API response
 
       // Assuming the result is a list of maps
@@ -99,7 +99,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
         isLoading = true;
       });
 
-      final result = await ApiService.getTimeLog(email, year, month);
+      final result = await ApiService.getTimeLog(email, year, month, context);
 
       if (!mounted)
         return; // Check if the widget is still mounted before updating state

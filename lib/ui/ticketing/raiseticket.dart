@@ -156,7 +156,8 @@ class _RaiseTicketPageState extends State<RaiseTicketPage> {
                   Navigator.of(context).pop();
                 }
 
-                final response = await ApiService.createTicket(ticketData);
+                final response =
+                    await ApiService.createTicket(context, ticketData);
 
                 if (response.statusCode == 200 || response.statusCode == 201) {
                   if (mounted) {

@@ -21,7 +21,7 @@ class _AllMeetingsState extends State<AllMeetings> {
   @override
   void initState() {
     super.initState();
-    _meetingsFuture = ApiService.getAllMeetings();
+    _meetingsFuture = ApiService.getAllMeetings(context);
   }
 
   @override

@@ -70,7 +70,8 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
 
       try {
         final apiService = ApiService();
-        final response = await apiService.createMeeting(meetingDetails);
+        final response = await apiService.createMeeting(
+            widget.email!, context, meetingDetails);
 
         print('Response status: ${response.statusCode}');
         print('Response body: ${response.body}');
@@ -145,7 +146,7 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
 
   void fetchParticipants() async {
     try {
-      final users = await ApiService.getAllUsersName();
+      final users = await ApiService.getAllUsersName(widget.email!, context);
       print("Fetched Users: $users");
       setState(() {
         allParticipants =

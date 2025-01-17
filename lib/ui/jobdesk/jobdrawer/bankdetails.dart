@@ -43,9 +43,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
 
       try {
         await ApiService.submitBankDetails(
-          email: widget.email,
-          bankDetails: bankDetails,
-        );
+            email: widget.email, bankDetails: bankDetails, context);
 
         Fluttertoast.showToast(
           msg: "Bank details submitted successfully!",

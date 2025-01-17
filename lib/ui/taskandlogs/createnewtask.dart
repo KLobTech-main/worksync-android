@@ -33,7 +33,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   Future<List<dynamic>> _fetchUsers() async {
     try {
-      final users = await ApiService.getAllUsers(widget.email!);
+      final users = await ApiService.getAllUsers(widget.email!, context);
       setState(() {
         allUsers = users;
         userNames = users.map((user) => user['name'] ?? "Unnamed").toList();
@@ -82,7 +82,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           description: description,
           deadLine: startDate,
           status: "On Going",
-          createdAt: startDate);
+          createdAt: startDate,
+          context);
 
       Fluttertoast.showToast(
         msg: "Task created successfully!",
@@ -153,413 +154,392 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: themeProvider.themeData.brightness == Brightness.light
-            ? const Color.fromARGB(255, 246, 244, 244)
-            : Color(0xFF1C1F26),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: themeProvider.themeData.brightness ==
-                                    Brightness.light
-                                ? Colors.black
-                                : Color(0xFF57C9E7),
-                          )),
+    return Scaffold(
+      backgroundColor: themeProvider.themeData.brightness == Brightness.light
+          ? const Color.fromARGB(255, 246, 244, 244)
+          : Color(0xFF1C1F26),
+      appBar: AppBar(
+        title: Text('Create New Task',
+            style: TextStyle(
+              color: themeProvider.themeData.brightness == Brightness.light
+                  ? Colors.white
+                  : Color(0xFF57C9E7),
+            )),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeProvider.themeData.brightness == Brightness.light
+                ? LinearGradient(
+                    colors: [Colors.indigo.shade900, Colors.indigo.shade900],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null, // You can use null for no gradient in dark mode
+            color: themeProvider.themeData.brightness == Brightness.dark
+                ? Color.fromARGB(255, 24, 28, 37)
+                : null, // This is used when brightness is dark for a solid color
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: themeProvider.themeData.brightness == Brightness.light
+              ? Colors.white
+              : Color(0xFF57C9E7),
+        ), // Adjust icon color for dark theme
+
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Task name",
+                    style: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.indigo.shade900
+                            : Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    style: TextStyle(
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.black
+                              : Colors.white,
                     ),
-                    SizedBox(width: 5),
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Create New Task',
-                        style: GoogleFonts.poppins(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                    controller: taskNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Task Name',
+                      labelStyle: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.white.withOpacity(0.3),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
                           color: themeProvider.themeData.brightness ==
                                   Brightness.light
                               ? Colors.black
-                              : Color(0xFF57C9E7),
+                              : Colors.grey,
+                          width: 2,
+                        ),
+                      ), // Added
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Description",
+                    style: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.indigo.shade900
+                            : Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    style: TextStyle(
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.black
+                              : Colors.white,
+                    ),
+                    controller: descriptionController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      labelText: 'Description',
+                      labelStyle: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.white.withOpacity(0.3),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : Colors.grey,
+                          width: 2,
+                        ),
+                      ), // Added
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Deadline",
+                    style: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.indigo.shade900
+                            : Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    style: TextStyle(
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.black
+                              : Colors.white,
+                    ),
+                    controller: startDateController,
+                    readOnly: true,
+                    onTap: () => _pickStartDate(
+                        context, startDateController, themeProvider),
+                    decoration: InputDecoration(
+                      labelText: 'Select Start Date',
+                      labelStyle: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.white.withOpacity(0.3),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : Colors.grey,
+                          width: 2,
+                        ),
+                      ), // Added
+                    ),
+                  ),
+                  // SizedBox(height: 16),
+                  // Text(
+                  //   "Deadline",
+                  //   style: TextStyle(
+                  //       color: themeProvider.themeData.brightness ==
+                  //               Brightness.light
+                  //           ? Colors.indigo.shade900
+                  //           : Colors.white,
+                  //       fontSize: 18,
+                  //       fontWeight: FontWeight.bold),
+                  // ),
+                  // SizedBox(height: 10),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: TextField(
+                  //         style: TextStyle(
+                  //           color: themeProvider.themeData.brightness ==
+                  //                   Brightness.light
+                  //               ? Colors.black
+                  //               : Colors.white,
+                  //         ),
+                  //         controller: deadlineController,
+                  //         decoration: InputDecoration(
+                  //           labelText: 'Deadline (In Days)',
+                  //           labelStyle: TextStyle(
+                  //             color:
+                  //                 themeProvider.themeData.brightness ==
+                  //                         Brightness.light
+                  //                     ? Colors.black
+                  //                     : Colors.white,
+                  //           ),
+                  //           border: OutlineInputBorder(
+                  //             borderRadius: BorderRadius.circular(10.0),
+                  //             borderSide: BorderSide(
+                  //               color: themeProvider
+                  //                           .themeData.brightness ==
+                  //                       Brightness.light
+                  //                   ? Colors.black.withOpacity(0.3)
+                  //                   : Colors.white.withOpacity(0.3),
+                  //             ),
+                  //           ),
+                  //           focusedBorder: OutlineInputBorder(
+                  //             borderRadius: BorderRadius.circular(10.0),
+                  //             borderSide: BorderSide(
+                  //               color: themeProvider
+                  //                           .themeData.brightness ==
+                  //                       Brightness.light
+                  //                   ? Colors.black
+                  //                   : Colors.grey,
+                  //               width: 2,
+                  //             ),
+                  //           ), // Added
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Participants",
+                    style: TextStyle(
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.indigo.shade900
+                              : Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.grey,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: themeProvider.themeData.brightness ==
+                              Brightness.light
+                          ? const Color.fromARGB(255, 246, 244, 244)
+                          : Color(
+                              0xFF1C1F26), // Dark background for dropdown in dark mode
+                    ),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      underline: SizedBox(),
+                      hint: Text(
+                        "Select Participant",
+                        style: TextStyle(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : Colors.white, // Light/dark hint text color
+                        ),
+                      ),
+                      value: selectedUser,
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedUser = value;
+                        });
+                      },
+                      items: userNames.isEmpty
+                          ? [
+                              DropdownMenuItem(
+                                value: null,
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 8),
+                                    Text(
+                                      "Loading...",
+                                      style: TextStyle(
+                                        color: themeProvider
+                                                    .themeData.brightness ==
+                                                Brightness.light
+                                            ? Colors.black
+                                            : Colors
+                                                .white, // Loading text color
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                          : userNames.map((name) {
+                              return DropdownMenuItem<String>(
+                                value: name,
+                                child: Text(
+                                  name,
+                                  style: TextStyle(
+                                    color: themeProvider.themeData.brightness ==
+                                            Brightness.light
+                                        ? Colors.black
+                                        : Colors
+                                            .white, // Dropdown item text color
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                    ),
+                  ),
+                  if (selectedUser != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        "Selected User: $selectedUser",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : Colors.white, // Text color for selected user
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Task name",
-                            style: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.indigo.shade900
-                                    : Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          TextField(
-                            style: TextStyle(
-                              color: themeProvider.themeData.brightness ==
-                                      Brightness.light
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                            controller: taskNameController,
-                            decoration: InputDecoration(
-                              labelText: 'Task Name',
-                              labelStyle: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.black
-                                    : Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black.withOpacity(0.3)
-                                      : Colors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black
-                                      : Colors.grey,
-                                  width: 2,
-                                ),
-                              ), // Added
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Description",
-                            style: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.indigo.shade900
-                                    : Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          TextField(
-                            style: TextStyle(
-                              color: themeProvider.themeData.brightness ==
-                                      Brightness.light
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                            controller: descriptionController,
-                            maxLines: 3,
-                            decoration: InputDecoration(
-                              labelText: 'Description',
-                              labelStyle: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.black
-                                    : Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black.withOpacity(0.3)
-                                      : Colors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black
-                                      : Colors.grey,
-                                  width: 2,
-                                ),
-                              ), // Added
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Deadline",
-                            style: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.indigo.shade900
-                                    : Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          TextField(
-                            style: TextStyle(
-                              color: themeProvider.themeData.brightness ==
-                                      Brightness.light
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                            controller: startDateController,
-                            readOnly: true,
-                            onTap: () => _pickStartDate(
-                                context, startDateController, themeProvider),
-                            decoration: InputDecoration(
-                              labelText: 'Select Start Date',
-                              labelStyle: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.black
-                                    : Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black.withOpacity(0.3)
-                                      : Colors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black
-                                      : Colors.grey,
-                                  width: 2,
-                                ),
-                              ), // Added
-                            ),
-                          ),
-                          // SizedBox(height: 16),
-                          // Text(
-                          //   "Deadline",
-                          //   style: TextStyle(
-                          //       color: themeProvider.themeData.brightness ==
-                          //               Brightness.light
-                          //           ? Colors.indigo.shade900
-                          //           : Colors.white,
-                          //       fontSize: 18,
-                          //       fontWeight: FontWeight.bold),
-                          // ),
-                          // SizedBox(height: 10),
-                          // Row(
-                          //   children: [
-                          //     Expanded(
-                          //       child: TextField(
-                          //         style: TextStyle(
-                          //           color: themeProvider.themeData.brightness ==
-                          //                   Brightness.light
-                          //               ? Colors.black
-                          //               : Colors.white,
-                          //         ),
-                          //         controller: deadlineController,
-                          //         decoration: InputDecoration(
-                          //           labelText: 'Deadline (In Days)',
-                          //           labelStyle: TextStyle(
-                          //             color:
-                          //                 themeProvider.themeData.brightness ==
-                          //                         Brightness.light
-                          //                     ? Colors.black
-                          //                     : Colors.white,
-                          //           ),
-                          //           border: OutlineInputBorder(
-                          //             borderRadius: BorderRadius.circular(10.0),
-                          //             borderSide: BorderSide(
-                          //               color: themeProvider
-                          //                           .themeData.brightness ==
-                          //                       Brightness.light
-                          //                   ? Colors.black.withOpacity(0.3)
-                          //                   : Colors.white.withOpacity(0.3),
-                          //             ),
-                          //           ),
-                          //           focusedBorder: OutlineInputBorder(
-                          //             borderRadius: BorderRadius.circular(10.0),
-                          //             borderSide: BorderSide(
-                          //               color: themeProvider
-                          //                           .themeData.brightness ==
-                          //                       Brightness.light
-                          //                   ? Colors.black
-                          //                   : Colors.grey,
-                          //               width: 2,
-                          //             ),
-                          //           ), // Added
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Participants",
-                            style: TextStyle(
-                              color: themeProvider.themeData.brightness ==
-                                      Brightness.light
-                                  ? Colors.indigo.shade900
-                                  : Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.grey
-                                    : Colors.grey,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: themeProvider.themeData.brightness ==
-                                      Brightness.light
-                                  ? Colors.white
-                                  : Color(
-                                      0xFF1C1F26), // Dark background for dropdown in dark mode
-                            ),
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              underline: SizedBox(),
-                              hint: Text(
-                                "Select Participant",
-                                style: TextStyle(
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black
-                                      : Colors
-                                          .white, // Light/dark hint text color
-                                ),
-                              ),
-                              value: selectedUser,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  selectedUser = value;
-                                });
-                              },
-                              items: userNames.isEmpty
-                                  ? [
-                                      DropdownMenuItem(
-                                        value: null,
-                                        child: Row(
-                                          children: [
-                                            SizedBox(width: 8),
-                                            Text(
-                                              "Loading...",
-                                              style: TextStyle(
-                                                color: themeProvider.themeData
-                                                            .brightness ==
-                                                        Brightness.light
-                                                    ? Colors.black
-                                                    : Colors
-                                                        .white, // Loading text color
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ]
-                                  : userNames.map((name) {
-                                      return DropdownMenuItem<String>(
-                                        value: name,
-                                        child: Text(
-                                          name,
-                                          style: TextStyle(
-                                            color: themeProvider
-                                                        .themeData.brightness ==
-                                                    Brightness.light
-                                                ? Colors.black
-                                                : Colors
-                                                    .white, // Dropdown item text color
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                            ),
-                          ),
-                          if (selectedUser != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: Text(
-                                "Selected User: $selectedUser",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.black
-                                      : Colors
-                                          .white, // Text color for selected user
-                                ),
-                              ),
-                            ),
-                          SizedBox(height: 16),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 60,
-                  margin: EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: _createTask,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.indigo.shade900
-                              : Color(0xFF57C9E7),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                    ),
-                    child: Text(
-                      'Create Task',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                  SizedBox(height: 16),
+                ],
+              ),
             ),
-            // Centered Circular Progress Indicator
-            // if (userNames.isEmpty)
-            //   Center(
-            //     child: CircularProgressIndicator(
-            //       color: themeProvider.themeData.brightness == Brightness.light
-            //           ? Colors.indigo.shade900
-            //           : Color(0xFF57C9E7),
-            //     ),
-            //   ),
-          ],
-        ),
+          ),
+          Spacer(),
+          Container(
+            width: double.infinity,
+            height: 50,
+            margin: EdgeInsets.all(16),
+            child: ElevatedButton(
+              onPressed: _createTask,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    themeProvider.themeData.brightness == Brightness.light
+                        ? Colors.indigo.shade900
+                        : Color(0xFF57C9E7),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+              ),
+              child: Text(
+                'Create Task',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

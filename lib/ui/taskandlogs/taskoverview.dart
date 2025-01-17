@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../webservices/api.dart';
-import 'createnewtask.dart';
 
 class TaskOverviewScreen extends StatefulWidget {
   final String? name;
@@ -27,8 +26,8 @@ class _TaskOverviewScreenState extends State<TaskOverviewScreen> {
   @override
   void initState() {
     super.initState();
-    assignedTasks = ApiService.getAssignedTasks(widget.email!);
-    givenTasks = ApiService.getGivenTasks(widget.email!);
+    assignedTasks = ApiService.getAssignedTasks(context, widget.email!);
+    givenTasks = ApiService.getGivenTasks(context, widget.email!);
   }
 
   @override
@@ -84,31 +83,31 @@ class _TaskOverviewScreenState extends State<TaskOverviewScreen> {
                         ),
                       ],
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CreateTaskScreen(
-                              name: widget.name,
-                              email: widget.email,
-                            ),
-                          ),
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 20,
-                        backgroundColor: themeProvider.themeData.brightness ==
-                                Brightness.light
-                            ? Colors.indigo.shade900
-                            : Color(0xFF57C9E7),
-                        child: Icon(
-                          Icons.add,
-                          size: 24,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => CreateTaskScreen(
+                    //           name: widget.name,
+                    //           email: widget.email,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: CircleAvatar(
+                    //     radius: 20,
+                    //     backgroundColor: themeProvider.themeData.brightness ==
+                    //             Brightness.light
+                    //         ? Colors.indigo.shade900
+                    //         : Color(0xFF57C9E7),
+                    //     child: Icon(
+                    //       Icons.add,
+                    //       size: 24,
+                    //       color: Colors.white,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 16),
@@ -203,9 +202,9 @@ class _TaskOverviewScreenState extends State<TaskOverviewScreen> {
 
                                   setState(() {
                                     assignedTasks = ApiService.getAssignedTasks(
-                                        widget.email!);
-                                    givenTasks =
-                                        ApiService.getGivenTasks(widget.email!);
+                                        context, widget.email!);
+                                    givenTasks = ApiService.getGivenTasks(
+                                        context, widget.email!);
                                   });
 
                                   Fluttertoast.showToast(
@@ -661,10 +660,10 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
 
                 try {
                   await ApiService.extendDeadline(
-                    taskId,
-                    newDeadlineController.text,
-                    reasonController.text,
-                  );
+                      taskId,
+                      newDeadlineController.text,
+                      reasonController.text,
+                      context);
                   Fluttertoast.showToast(
                     timeInSecForIosWeb: 2,
                     msg: "Deadline extended successfully",

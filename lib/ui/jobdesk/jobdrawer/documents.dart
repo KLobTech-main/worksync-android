@@ -32,7 +32,7 @@ class _DocumentPageState extends State<DocumentPage> {
   Future<void> fetchDocuments() async {
     setState(() => isLoading = true);
     try {
-      documents = await ApiService.fetchDocuments(email);
+      documents = await ApiService.fetchDocuments(email, context);
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Failed to fetch documents.",

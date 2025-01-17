@@ -30,6 +30,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       try {
         final response = await _apiService.submitFeedback(
           email: widget.email!,
+          context,
           description: _descriptionController.text.trim(),
         );
 

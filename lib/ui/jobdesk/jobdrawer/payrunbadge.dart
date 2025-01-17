@@ -24,7 +24,7 @@ class _PayrunAndBadgeScreenState extends State<PayrunAndBadgeScreen> {
 
   Future<SalaryDetails?> fetchSalaryDetails() async {
     try {
-      final user = await ApiService.getUserByEmail(widget.email);
+      final user = await ApiService.getUserByEmail(widget.email, context);
       if (user == null) {
         print('Error: User not found for email ${widget.email}');
         return null;

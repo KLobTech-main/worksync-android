@@ -60,7 +60,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
     });
 
     final apiService = ApiService();
-    final success = await apiService.resetPassword(email, newPassword);
+    final success = await apiService.resetPassword(email, newPassword, context);
 
     setState(() {
       isLoading = false;

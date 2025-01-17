@@ -58,7 +58,7 @@ class _LeaveManagementScreenState extends State<LeaveManagementScreen>
     String? email = widget.email;
 
     final data = await ApiService.getLeaveStatus(
-        email!, date); // Pass the values correctly
+        email!, date, context); // Pass the values correctly
 
     setState(() {
       allLeaveData = data;

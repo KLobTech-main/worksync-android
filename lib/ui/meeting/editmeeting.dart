@@ -61,6 +61,7 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
           duration: durationController.text,
           date: dateController.text,
           meetingLink: linkController.text,
+          context,
         );
         if (response.statusCode == 200) {
           _showToast('Meeting updated successfully!');

@@ -23,7 +23,7 @@ class _AddressPageState extends State<AddressPage> {
     setState(() => _isLoading = true);
 
     try {
-      final userData = await ApiService.getUserByEmail(widget.email);
+      final userData = await ApiService.getUserByEmail(widget.email, context);
       if (!mounted) return; // Check again after the async call
       setState(() {
         _addressDetails = userData?.addressDetails;
@@ -175,10 +175,10 @@ class _AddressPageState extends State<AddressPage> {
 
                     try {
                       await ApiService.updateAddress(
-                        widget.email,
-                        currentController.text.trim(),
-                        permanentController.text.trim(),
-                      );
+                          widget.email,
+                          currentController.text.trim(),
+                          permanentController.text.trim(),
+                          context);
                       Navigator.pop(context); // Close the bottom sheet
                       Future.delayed(const Duration(milliseconds: 300), () {
                         if (mounted) {

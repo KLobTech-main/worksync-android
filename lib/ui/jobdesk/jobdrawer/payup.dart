@@ -20,7 +20,7 @@ class _PaySlipScreenState extends State<PaySlipScreen> {
   @override
   void initState() {
     super.initState();
-    paySlipsFuture = ApiService().getPaySlips(widget.email);
+    paySlipsFuture = ApiService().getPaySlips(widget.email, context);
   }
 
   @override

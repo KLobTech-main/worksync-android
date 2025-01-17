@@ -24,7 +24,7 @@ class _SalaryOverviewPageState extends State<SalaryOverviewPage> {
 
   Future<List<String>> fetchSalaryOverview(String email) async {
     final user = await ApiService.getUserByEmail(
-        email); // Ensure the class is correctly referenced
+        email, context); // Ensure the class is correctly referenced
     return user?.salaryOverview ?? ["0", "0"];
   }
 

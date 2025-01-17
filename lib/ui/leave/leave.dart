@@ -29,7 +29,8 @@ class _LeaveSummaryPageState extends State<LeaveSummaryPage> {
 
   Future<void> _loadLeaveSummary() async {
     try {
-      final response = await ApiService.getLeaveSummary(widget.email ?? '');
+      final response =
+          await ApiService.getLeaveSummary(widget.email ?? '', context);
       if (response != null) {
         if (!mounted) return; // Ensure widget is still mounted
         setState(() {
