@@ -29,6 +29,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   void initState() {
     super.initState();
     allUsersFuture = _fetchUsers();
+    debugPrint("name");
+    debugPrint(widget.name);
   }
 
   Future<List<dynamic>> _fetchUsers() async {
@@ -76,6 +78,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
     try {
       await ApiService.createTask(
+          name:widget.name,
           assignedBy: assignedBy,
           assignedTo: assignedTo,
           title: taskName,

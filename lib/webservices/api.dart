@@ -464,6 +464,7 @@ class ApiService {
 
   static Future<void> createTask(
     BuildContext context, {
+      required String? name,
     required String? assignedBy,
     required String assignedTo,
     required String title,
@@ -483,12 +484,13 @@ class ApiService {
       final response = await ApiService.makeRequest(
         context: context,
         url: url,
-        method: 'GET',
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
         },
         body: jsonEncode({
+          "name" : name,
           "assignedBy": assignedBy,
           "assignedTo": assignedTo,
           "title": title,
