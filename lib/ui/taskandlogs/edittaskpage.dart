@@ -2,9 +2,9 @@
 import 'package:dass/colortheme/theme_maneger.dart';
 import 'package:dass/webservices/api.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class EditTaskPage extends StatefulWidget {
   final String taskId;
@@ -375,50 +375,60 @@ class _EditTaskPageState extends State<EditTaskPage> {
                   ),
                   const SizedBox(height: 16),
                   Center(
-                    child:  ElevatedButton(
-                      onPressed: () async {
-                        if (_assignedToEmail != null) {
-                          try {
-                            await ApiService.editTask(
+                      child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.indigo.shade900
+                              : Color(0xFF57C9E7),
+                      foregroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                    onPressed: () async {
+                      if (_assignedToEmail != null) {
+                        try {
+                          await ApiService.editTask(
                               widget.taskId,
                               _assignedToEmail!,
                               _titleController.text,
                               _descriptionController.text,
                               _deadlineController.text,
-                              context
-                            );
-                            // Show toast on success
-                            Fluttertoast.showToast(
-                              msg: "Task reassigned successfully!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              backgroundColor: Colors.indigo.shade900,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                            Navigator.pop(context); // Navigate back
-                          } catch (e) {
-                            // Handle any errors during the task update
-                            Fluttertoast.showToast(
-                              msg: "Failed to reassign task. Please try again.",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Please select a user to reassign the task."),
-                            ),
+                              context);
+                          // Show toast on success
+                          Fluttertoast.showToast(
+                            msg: "Task reassigned successfully!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.indigo.shade900,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                          Navigator.pop(context); // Navigate back
+                        } catch (e) {
+                          // Handle any errors during the task update
+                          Fluttertoast.showToast(
+                            msg: "Failed to reassign task. Please try again.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
                           );
                         }
-                      },
-                      child: Text("Save Changes"),
-                    )
-                  ),
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: "Please select a user to reassign the task.",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      }
+                    },
+                    child: Text("Save Changes"),
+                  )),
                 ],
               ),
             ),

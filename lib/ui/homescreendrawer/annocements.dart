@@ -102,7 +102,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                     Icons.announcement,
                     color:
                         themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.white
+                            ? Colors.indigo.shade900
                             : Color(0xFF57C9E7),
                   ),
                   title: Text(announcement['title'] ?? 'No Title'),
@@ -111,7 +111,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                     style: TextStyle(
                       color:
                           themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.white
+                              ? Colors.grey
                               : Colors.grey,
                     ),
                   ),
