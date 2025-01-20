@@ -108,20 +108,42 @@ class _HomeScreenState extends State<HomeScreen> {
             color: themeProvider.themeData.brightness == Brightness.light
                 ? Colors.black
                 : Colors.white,
+            fontSize: 24,
           ),
-          content: Text(message),
+          content: Text(
+            message,
+            style: TextStyle(
+              color: themeProvider.themeData.brightness == Brightness.light
+                  ? Colors.black
+                  : Colors.white,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
               },
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: themeProvider.themeData.brightness == Brightness.light
+                      ? Colors.indigo.shade900
+                      : const Color(0xFF57C9E7),
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Perform action and close dialog
               },
-              child: const Text('Okay'),
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: themeProvider.themeData.brightness == Brightness.light
+                      ? Colors.indigo.shade900
+                      : const Color(0xFF57C9E7),
+                ),
+              ),
             ),
           ],
         );
@@ -1099,17 +1121,16 @@ class _HomeScreenState extends State<HomeScreen> {
               await endPunchOutTime();
             }
           },
-          child: Icon(
-            hasPunchedIn
-                ? Icons.exit_to_app
-                : Icons.fingerprint, // Change icon based on punch-in status
-          ),
           backgroundColor: hasPunchedIn
               ? Colors.red.shade800
               : Colors.green.shade800, // Change color based on punch-in status
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
                 35), // Adjust borderRadius for a bigger circle
+          ),
+          child: Icon(
+            hasPunchedIn ? Icons.exit_to_app : Icons.fingerprint,
+            color: Colors.white, // Change icon based on punch-in status
           ),
         ),
       ),
