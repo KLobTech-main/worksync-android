@@ -60,10 +60,17 @@ class _EditTaskPageState extends State<EditTaskPage> {
 
   Future<void> _pickDeadline() async {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    DateTime initialDate = DateTime.parse(widget.deadline);
+    DateTime firstDate = DateTime.now();
+
+    if (initialDate.isBefore(firstDate)) {
+      initialDate = firstDate;
+    }
+
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.parse(widget.deadline),
-      firstDate: DateTime.now(),
+      initialDate: initialDate,
+      firstDate: firstDate,
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
@@ -96,6 +103,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
         );
       },
     );
+
     if (selectedDate != null) {
       setState(() {
         _deadlineController.text =
@@ -121,15 +129,26 @@ class _EditTaskPageState extends State<EditTaskPage> {
           ? Colors.white
           : const Color(0xFF1C1F26),
       appBar: AppBar(
-        backgroundColor: themeProvider.themeData.brightness == Brightness.light
-            ? Colors.indigo.shade900
-            : Color(0xFF57C9E7),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: themeProvider.themeData.brightness == Brightness.light
+                ? LinearGradient(
+                    colors: [Colors.indigo.shade900, Colors.indigo.shade900],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null, // You can use null for no gradient in dark mode
+            color: themeProvider.themeData.brightness == Brightness.dark
+                ? Color.fromARGB(255, 24, 28, 37)
+                : null, // This is used when brightness is dark for a solid color
+          ),
+        ),
         title: Text(
           "Edit Task",
           style: TextStyle(
             color: themeProvider.themeData.brightness == Brightness.light
                 ? Colors.white
-                : const Color(0xFF57C9E7),
+                : Color(0xFF57C9E7),
           ),
         ),
         elevation: 0,
@@ -138,7 +157,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
             Icons.arrow_back,
             color: themeProvider.themeData.brightness == Brightness.light
                 ? Colors.white
-                : const Color(0xFF57C9E7),
+                : Color(0xFF57C9E7),
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -400,7 +419,11 @@ class _EditTaskPageState extends State<EditTaskPage> {
                             msg: "Task reassigned successfully!",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Colors.indigo.shade900,
+                            backgroundColor:
+                                themeProvider.themeData.brightness ==
+                                        Brightness.light
+                                    ? Colors.indigo.shade900
+                                    : Color(0xFF57C9E7),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );

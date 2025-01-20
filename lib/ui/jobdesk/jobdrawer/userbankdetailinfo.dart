@@ -126,42 +126,42 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                               : Colors.white),
                     ),
                     SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        final result = Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                BankDetailsPage(email: widget.email),
-                          ),
-                        );
-                        if (result == true) {
-                          setState(() {
-                            userBankDetails =
-                                ApiService.getUserBankDetailsByEmail(
-                                    widget.email, context);
-                          });
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: themeProvider.themeData.brightness ==
-                                Brightness.light
-                            ? Colors.indigo.shade900
-                            : Color(0xFF57C9E7),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        "Add Bank Details",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     final result = Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             BankDetailsPage(email: widget.email),
+                    //       ),
+                    //     );
+                    //     if (result == true) {
+                    //       setState(() {
+                    //         userBankDetails =
+                    //             ApiService.getUserBankDetailsByEmail(
+                    //                 widget.email, context);
+                    //       });
+                    //     }
+                    //   },
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: themeProvider.themeData.brightness ==
+                    //             Brightness.light
+                    //         ? Colors.indigo.shade900
+                    //         : Color(0xFF57C9E7),
+                    //     padding:
+                    //         EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(30),
+                    //     ),
+                    //   ),
+                    //   child: Text(
+                    //     "Add Bank Details",
+                    //     style: TextStyle(
+                    //       fontSize: 18,
+                    //       color: Colors.white,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -47,7 +47,7 @@ class _DocumentPageState extends State<DocumentPage> {
   }
 
   Future<void> uploadDocument() async {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {

@@ -143,29 +143,29 @@ class _MeetingListScreenState extends State<MeetingListScreen> {
             ),
           ),
           SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.indigo.shade900
-                      : Color(0xFF57C9E7),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateMeetingScreen(
-                    name: widget.name,
-                    email: widget.email,
-                  ),
-                ),
-              );
-            },
-            child: Text(
-              'Create Meeting',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+          // ElevatedButton(
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor:
+          //         themeProvider.themeData.brightness == Brightness.light
+          //             ? Colors.indigo.shade900
+          //             : Color(0xFF57C9E7),
+          //   ),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => CreateMeetingScreen(
+          //           name: widget.name,
+          //           email: widget.email,
+          //         ),
+          //       ),
+          //     );
+          //   },
+          //   child: Text(
+          //     'Create Meeting',
+          //     style: TextStyle(color: Colors.white),
+          //   ),
+          // ),
         ],
       ),
     );

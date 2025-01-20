@@ -136,6 +136,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 : null, // This is used when brightness is dark for a solid color
           ),
         ),
+        iconTheme: IconThemeData(
+          color: themeProvider.themeData.brightness == Brightness.light
+              ? Colors.white
+              : Color(0xFF57C9E7),
+        ),
       ),
       body: isLoading
           ? Center(

@@ -158,8 +158,11 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
                           crossAxisSpacing: 16.0,
                           mainAxisSpacing: 16.0,
                           children: [
-                            buildLeaveCard('Optional', user!.monthlyLeaves,
-                                user!.allLeaves),
+                            buildLeaveCard(
+                              'Optional',
+                              user!.monthlyLeaves,
+                              user!.allLeaves,
+                            ),
                             buildLeaveCard(
                                 'Sick', user!.monthlyLeaves, user!.allLeaves),
                             buildLeaveCard(
@@ -212,7 +215,7 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
       String leaveType, MonthlyLeaves? monthly, AllLeaves? total) {
     double monthlyLeave = 0;
     double totalLeave = 0;
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     // Get the current month key
     String currentMonthKey =
         "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}";
@@ -242,7 +245,12 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
           children: [
             Text(
               leaveType,
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: themeProvider.themeData.brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white),
             ),
             SizedBox(height: 8.0),
             Text(

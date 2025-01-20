@@ -97,13 +97,18 @@ class _HomeScreenState extends State<HomeScreen> {
     print("result.... : $result");
   }
 
-
   void _showAttendanceDialog(String status, String message) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(status == 'success' ? 'Attendance Status' : 'Error'),
+          titleTextStyle: TextStyle(
+            color: themeProvider.themeData.brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
           content: Text(message),
           actions: [
             TextButton(
@@ -1019,6 +1024,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               )),
                     );
                   }),
+                  _buildGridOption(Icons.task_outlined, "Create Task",
+                      onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateTaskScreen(
+                          name: widget.name,
+                          email: widget.email,
+                        ),
+                      ),
+                    );
+                    debugPrint("name : ${widget.name}");
+                    debugPrint("email : ${widget.email}");
+                  }),
                   _buildGridOption(Icons.support_agent, "Ticket", onTap: () {
                     Navigator.push(
                       context,
@@ -1036,20 +1055,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => CalendarHolidayScreen()),
                     );
                   }),
-                  _buildGridOption(Icons.task_outlined, "Create Task",
-                      onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateTaskScreen(
-                          name: widget.name,
-                          email: widget.email,
-                        ),
-                      ),
-                    );
-                    debugPrint("name : ${widget.name}");
-                    debugPrint("email : ${widget.email}");
-                  }),
                 ],
               ),
             ),
@@ -1061,21 +1066,23 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.indigo.shade900,
+        color: themeProvider.themeData.brightness == Brightness.light
+            ? Colors.indigo.shade900
+            : Color.fromARGB(255, 21, 24, 30),
         shape: const CircularNotchedRectangle(),
         notchMargin: 9.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () => _onItemTapped(0),
-            ),
-            const SizedBox(width: 40), // Space for the floating button
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () => _onItemTapped(2),
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.home),
+            //   onPressed: () => _onItemTapped(0),
+            // ),
+            // const SizedBox(width: 40), // Space for the floating button
+            // IconButton(
+            //   icon: const Icon(Icons.person),
+            //   onPressed: () => _onItemTapped(2),
+            // ),
           ],
         ),
       ),

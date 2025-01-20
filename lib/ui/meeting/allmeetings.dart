@@ -102,7 +102,7 @@ class _AllMeetingsState extends State<AllMeetings> {
                         color: themeProvider.themeData.brightness ==
                                 Brightness.light
                             ? Colors.black
-                            : Colors.grey,
+                            : Colors.white,
                       ),
                     ),
                     subtitle: Column(
