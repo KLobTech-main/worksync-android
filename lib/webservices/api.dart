@@ -1267,7 +1267,7 @@ class ApiService {
 
     final headers = {
       "Content-Type": "application/json",
-      "Authorization": _authToken!, // Ensure the token is set
+      "Authorization": _authToken!,
     };
 
     print("token:$_authToken");
@@ -1277,21 +1277,22 @@ class ApiService {
     }
 
     // Debugging: Print the CURL equivalent for troubleshooting
-
+    print(
+        "curl -X POST '$url' -H 'Content-Type: application/json' -H 'Authorization: $_authToken' -d '${json.encode(punchOutData)}'");
     try {
       final response = await ApiService.makeRequest(
         context: context,
         url: url,
-        method: 'GET',
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": _authToken!,
         },
         body: json.encode(punchOutData),
       );
+      print("Response Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
 
-      // Log the response
-      print("Response: ${response.statusCode}, Body: ${response.body}");
       return response;
     } catch (e) {
       print("Error in punchOut API: $e");
@@ -2010,7 +2011,7 @@ class ApiService {
     final response = await ApiService.makeRequest(
       context: context,
       url: url.toString(),
-      method: 'GET',
+      method: 'POST',
       headers: {
         "Content-Type": "application/json",
         "Authorization": _authToken!,
@@ -2078,6 +2079,9 @@ class ApiService {
           "Authorization": _authToken!,
         },
       );
+      print("\n--- Response for GET ---");
+      print("Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

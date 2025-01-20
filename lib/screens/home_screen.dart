@@ -85,12 +85,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _checkAttendanceStatus() async {
-    String email1 = widget.email!; // Replace with actual email
+    String email1 = widget.email!; // Ensure email is not null
     final result = await ApiService.fetchAttendanceStatus(email1, context);
 
-    _showAttendanceDialog(result['status'], result['message']);
+    // Ensure result is not null and contains required keys
+    String status = result['status'] ?? 'error'; // Default to 'error' if null
+    String message = result['message'] ?? 'Unable to fetch attendance status.';
+
+    // Call the dialog with non-null values
+    _showAttendanceDialog(status, message);
     print("result.... : $result");
   }
+
 
   void _showAttendanceDialog(String status, String message) {
     showDialog(
@@ -167,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Map<String, dynamic> data =
           jsonDecode(userData); // Decode the JSON string
       setState(() {
-        hasPunchedIn = data['hasPunchedIn'] ?? false; // Load user-specific data
+        hasPunchedIn = data['hasPunchedIn'] ?? false;
 
         punchInTime = data['punchInTime'];
         punchInId = data['punchInId'];

@@ -481,17 +481,16 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
           title: Row(
             children: [
               Icon(
                 Icons.date_range,
                 color: themeProvider.themeData.brightness == Brightness.light
                     ? Colors.indigo.shade900
-                    : Color(0xFF57C9E7),
+                    : const Color(0xFF57C9E7),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 "Extend Deadline",
                 style: GoogleFonts.poppins(
@@ -499,7 +498,7 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
                   fontSize: 20,
                   color: themeProvider.themeData.brightness == Brightness.light
                       ? Colors.indigo.shade900
-                      : Color(0xFF57C9E7),
+                      : const Color(0xFF57C9E7),
                 ),
               ),
             ],
@@ -520,31 +519,25 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
                         return Theme(
                           data: themeProvider.themeData.copyWith(
                             dialogBackgroundColor:
-                                themeProvider.themeData.brightness ==
-                                        Brightness.dark
-                                    ? Colors.grey.shade900
-                                    : Colors.white,
+                            themeProvider.themeData.brightness == Brightness.dark
+                                ? Colors.grey.shade900
+                                : Colors.white,
                             textButtonTheme: TextButtonThemeData(
                               style: TextButton.styleFrom(
-                                foregroundColor:
-                                    themeProvider.themeData.brightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.indigo.shade900,
+                                foregroundColor: themeProvider.themeData.brightness ==
+                                    Brightness.dark
+                                    ? Colors.white
+                                    : Colors.indigo.shade900,
                               ),
                             ),
-                            colorScheme:
-                                themeProvider.themeData.colorScheme.copyWith(
-                              primary: themeProvider.themeData.brightness ==
-                                      Brightness.dark
+                            colorScheme: themeProvider.themeData.colorScheme.copyWith(
+                              primary: themeProvider.themeData.brightness == Brightness.dark
                                   ? const Color(0xFF57C9E7)
                                   : Colors.indigo.shade900,
-                              surface: themeProvider.themeData.brightness ==
-                                      Brightness.dark
+                              surface: themeProvider.themeData.brightness == Brightness.dark
                                   ? Colors.grey.shade900
                                   : Colors.white,
-                              onSurface: themeProvider.themeData.brightness ==
-                                      Brightness.dark
+                              onSurface: themeProvider.themeData.brightness == Brightness.dark
                                   ? Colors.white
                                   : Colors.black,
                             ),
@@ -565,8 +558,7 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
                         labelText: 'New Deadline',
                         prefixIcon: Icon(
                           Icons.calendar_today,
-                          color: themeProvider.themeData.brightness ==
-                                  Brightness.light
+                          color: themeProvider.themeData.brightness == Brightness.light
                               ? Colors.indigo.shade900
                               : const Color(0xFF57C9E7),
                         ),
@@ -577,50 +569,31 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextField(
                   style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white,
+                    color: themeProvider.themeData.brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
                   ),
                   controller: reasonController,
                   maxLines: 5,
                   decoration: InputDecoration(
                     labelText: 'Reason for Extension',
                     labelStyle: TextStyle(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black
-                              : Colors.white,
+                      color: themeProvider.themeData.brightness == Brightness.light
+                          ? Colors.black
+                          : Colors.white,
                     ),
                     alignLabelWithHint: true,
                     prefixIcon: Icon(
                       Icons.edit,
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.indigo.shade900
-                              : Color(0xFF57C9E7),
+                      color: themeProvider.themeData.brightness == Brightness.light
+                          ? Colors.indigo.shade900
+                          : const Color(0xFF57C9E7),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: themeProvider.themeData.brightness ==
-                                Brightness.light
-                            ? Colors.black.withOpacity(0.3)
-                            : Colors.white.withOpacity(0.3),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: themeProvider.themeData.brightness ==
-                                Brightness.light
-                            ? Colors.black
-                            : Colors.grey,
-                        width: 2,
-                      ),
                     ),
                   ),
                 ),
@@ -633,15 +606,39 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
               child: Text(
                 "Cancel",
                 style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.indigo.shade900
-                            : Color(0xFF57C9E7),
-                    fontWeight: FontWeight.bold),
+                  color: themeProvider.themeData.brightness == Brightness.light
+                      ? Colors.indigo.shade900
+                      : const Color(0xFF57C9E7),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             ElevatedButton.icon(
               onPressed: () async {
+                // Validate inputs
+                if (newDeadlineController.text.isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: "Please select a new deadline",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.red.shade700,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  return;
+                }
+                if (reasonController.text.isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: "Please provide a reason for the extension",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.red.shade700,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  return;
+                }
+
                 Navigator.of(context).pop();
 
                 // Show a toast message
@@ -650,29 +647,28 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
                   msg: "Deadline extension request is sent",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
-                  backgroundColor:
-                      themeProvider.themeData.brightness == Brightness.light
-                          ? Colors.indigo.shade900
-                          : Color(0xFF57C9E7),
+                  backgroundColor: themeProvider.themeData.brightness == Brightness.light
+                      ? Colors.indigo.shade900
+                      : const Color(0xFF57C9E7),
                   textColor: Colors.white,
                   fontSize: 16.0,
                 );
 
                 try {
                   await ApiService.extendDeadline(
-                      taskId,
-                      newDeadlineController.text,
-                      reasonController.text,
-                      context);
+                    taskId,
+                    newDeadlineController.text,
+                    reasonController.text,
+                    context,
+                  );
                   Fluttertoast.showToast(
                     timeInSecForIosWeb: 2,
                     msg: "Deadline extended successfully",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
-                    backgroundColor:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.indigo.shade900
-                            : Color(0xFF57C9E7),
+                    backgroundColor: themeProvider.themeData.brightness == Brightness.light
+                        ? Colors.indigo.shade900
+                        : const Color(0xFF57C9E7),
                     textColor: Colors.white,
                     fontSize: 16.0,
                   );
@@ -688,18 +684,18 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
                   );
                 }
               },
-              icon: Icon(Icons.check, color: Colors.white),
-              label: Text(
+              icon: const Icon(Icons.check, color: Colors.white),
+              label: const Text(
                 "Submit",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    themeProvider.themeData.brightness == Brightness.light
-                        ? Colors.indigo.shade900
-                        : Color(0xFF57C9E7),
+                backgroundColor: themeProvider.themeData.brightness == Brightness.light
+                    ? Colors.indigo.shade900
+                    : const Color(0xFF57C9E7),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
             ),
           ],
@@ -707,6 +703,7 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
       },
     );
   }
+
 }
 
 class TaskCard extends StatelessWidget {
