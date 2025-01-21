@@ -175,7 +175,7 @@ class _JobHistoryScreenState extends State<JobHistoryScreen> {
         SizedBox(height: 10),
         JobDetailRow(
           title: 'Joining Date',
-          value: '05 Feb, 2024',
+          value: 'DD MM YYYY',
           icon: Icons.calendar_today,
         ),
       ],

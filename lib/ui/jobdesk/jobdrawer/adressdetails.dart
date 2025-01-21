@@ -50,7 +50,7 @@ class _AddressPageState extends State<AddressPage> {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        final themeProvider = Provider.of<ThemeProvider>(context);
+        final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -226,7 +226,7 @@ class _AddressPageState extends State<AddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
@@ -296,7 +296,7 @@ class _AddressPageState extends State<AddressPage> {
   }
 
   Widget _buildAddressCards() {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

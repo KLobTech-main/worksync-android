@@ -10,6 +10,7 @@ import 'package:dass/ui/auth/login.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -134,11 +135,12 @@ class ApiService {
   }
 
   /// GET: Fetch tasks assigned by a specific user(Get Assigned Task)
+  // GET: Fetch tasks assigned to a specific user
   static Future<List<dynamic>> getAssignedTasks(
       BuildContext context, String assignedBy) async {
     final String url = "$_baseUrl/tasks/get-assigned-tasks?email=$assignedBy";
     print("CURL Command:");
-    print("curl -X GET $url -H 'Content-Type: application/json' -d");
+    print("curl -X GET $url -H 'Content-Type: application/json'");
 
     try {
       final response = await ApiService.makeRequest(
@@ -151,8 +153,30 @@ class ApiService {
         },
       );
 
+      print("Response Status Code: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as List<dynamic>;
+      } else if (response.statusCode == 404) {
+        Fluttertoast.showToast(
+          msg: "No tasks found.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        throw Exception("No tasks found (404).");
+      } else if (response.statusCode == 401) {
+        Fluttertoast.showToast(
+          msg: "Token expired. Please log in again.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        throw Exception("Unauthorized (401): Token expired.");
       } else {
         throw Exception("Failed to fetch tasks: ${response.statusCode}");
       }
@@ -161,12 +185,13 @@ class ApiService {
     }
   }
 
-  ///GET: Fetch tasks assigned by a specific user(Get Given Task)
+// GET: Fetch tasks given by a specific user
   static Future<List<dynamic>> getGivenTasks(
       BuildContext context, String assignedTo) async {
     final String url = "$_baseUrl/tasks/get-given-tasks?assignedTo=$assignedTo";
     print("CURL Command:");
-    print("curl -X GET $url -H 'Content-Type: application/json' -d");
+    print("curl -X GET $url -H 'Content-Type: application/json'");
+
     try {
       final response = await ApiService.makeRequest(
         context: context,
@@ -178,8 +203,30 @@ class ApiService {
         },
       );
 
+      print("Response Status Code: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as List<dynamic>;
+      } else if (response.statusCode == 404) {
+        Fluttertoast.showToast(
+          msg: "No tasks found.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        throw Exception("No tasks found (404).");
+      } else if (response.statusCode == 401) {
+        Fluttertoast.showToast(
+          msg: "Token expired. Please log in again.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        throw Exception("Unauthorized (401): Token expired.");
       } else {
         throw Exception("Failed to fetch tasks: ${response.statusCode}");
       }
@@ -187,6 +234,7 @@ class ApiService {
       throw Exception("Error occurred: $e");
     }
   }
+
 
   /// PATCH: Update Task Status
   static Future<void> updateTaskStatus(
@@ -339,11 +387,17 @@ class ApiService {
           "Authorization": _authToken!,
         },
       );
+      print(
+          "curl -X GET $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken'");
+      print("\n--- Response for GET ---");
+      print("Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         // Parse the JSON response into a list
         return jsonDecode(response.body) as List<dynamic>;
-      } else {
+      }
+      else {
         throw Exception("Failed to fetch tasks: ${response.statusCode}");
       }
     } catch (e) {
@@ -372,7 +426,14 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as List<dynamic>;
-      } else {
+      }
+      else if (response.statusCode == 401) {
+        print("Invalid token: Authorization failed");
+        throw Exception("Invalid token: Please log in again.");
+      } else if (response.statusCode == 404) {
+        print("No tickets found for the user: $email");
+        return [];}
+      else {
         throw Exception("Failed to fetch users: ${response.statusCode}");
       }
     } catch (e) {
@@ -531,7 +592,13 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> responseBody = jsonDecode(response.body);
         return responseBody.map((json) => MeetingModal.fromJson(json)).toList();
-      } else {
+      }
+      else if (response.statusCode == 404) {
+        // Handle 404: No meetings scheduled
+        print("No meetings scheduled for the participant: $participantEmail");
+        return []; // Return an empty list
+      }
+      else {
         throw Exception("Failed to fetch meetings: ${response.statusCode}");
       }
     } catch (e) {
@@ -924,7 +991,13 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => PaySlipModel.fromJson(json)).toList();
-      } else {
+      }
+      else if (response.statusCode == 204) {
+        // Handle the 204 No Content response
+        print('No payslips found. Status code: 204');
+        return []; // Return an empty list if no content
+      }
+      else {
         print('Error: ${response.statusCode}');
         print('Error Message: ${response.body}');
         throw Exception('Failed to load payslips');
@@ -1002,13 +1075,16 @@ class ApiService {
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(response.body);
 
-        if (data.isEmpty) {
+        // Assuming the assets list is under the "data" key
+        final List<dynamic> assetsData = data['data'];
+
+        if (assetsData.isEmpty) {
           return [];
         }
 
-        return data.map((json) => AssetsModel.fromJson(json)).toList();
+        return assetsData.map((json) => AssetsModel.fromJson(json)).toList();
       } else {
         print('Error: ${response.statusCode}');
         print('Error Message: ${response.body}');
@@ -1787,7 +1863,14 @@ class ApiService {
           "status": status,
         }),
       );
-
+      print("Response Status Code: ${response.statusCode}");
+      print("Executing CURL Command:");
+      print("""
+curl -X PATCH $url \\
+  -H 'Content-Type: application/json' \\
+  -H 'Authorization: $_authToken' \\
+  -d '${jsonEncode({"meetingId": meetingId, "status": status})}'
+""");
       if (response.statusCode == 200) {
         print("Meeting status updated successfully.");
       } else {
@@ -1828,7 +1911,15 @@ class ApiService {
       if (response.statusCode == 200) {
         print("Meeting details updated successfully.");
         return response; // return the response here
-      } else {
+      }
+      else if (response.statusCode == 401) {
+        print("Invalid token: Authorization failed");
+        throw Exception("Invalid token: Please log in again.");
+      } else if (response.statusCode == 404) {
+        print("Meeting Not Found");
+        return response;
+      }
+      else {
         throw Exception(
             "Failed to update meeting details: ${response.statusCode}");
       }
@@ -1982,12 +2073,12 @@ class ApiService {
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        List data = json.decode(response.body)['users'];
+        List<dynamic> data = json.decode(response.body);
         return data
             .map((user) => {
-                  'name': user['name']?.toString() ?? '',
-                  'email': user['email']?.toString() ?? '',
-                })
+          'name': user['name']?.toString() ?? '',
+          'email': user['email']?.toString() ?? '',
+        })
             .toList();
       } else {
         throw Exception('Failed to fetch users');

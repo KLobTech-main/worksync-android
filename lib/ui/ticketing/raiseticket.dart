@@ -145,6 +145,7 @@ class _RaiseTicketPageState extends State<RaiseTicketPage> {
             } else {
               Map<String, dynamic> ticketData = {
                 "email": widget.email,
+                "name" : widget.name,
                 "title": titleController.text,
                 "description": descriptionController.text,
                 "status": "OPEN",

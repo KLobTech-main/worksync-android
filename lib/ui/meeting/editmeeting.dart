@@ -37,7 +37,7 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
   }
 
   void _showToast(String message) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen: false);
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
@@ -52,7 +52,18 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
 
   void _saveEdits() async {
     if (_formKey.currentState?.validate() ?? false) {
+      print("Form validation passed. Proceeding to update the meeting.");
+
       try {
+        print("Calling API to edit the meeting...");
+        print("Meeting ID: ${widget.meeting.id ?? 'N/A'}");
+        print("Title: ${titleController.text}");
+        print("Description: ${descriptionController.text}");
+        print("Mode: ${modeController.text}");
+        print("Duration: ${durationController.text}");
+        print("Date: ${dateController.text}");
+        print("Meeting Link: ${linkController.text}");
+
         final response = await ApiService.editMeeting(
           meetingId: widget.meeting.id ?? '',
           meetingTitle: titleController.text,
@@ -63,10 +74,16 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
           meetingLink: linkController.text,
           context,
         );
+
+        print("API Response: ${response.statusCode}");
+        print("API Response Body: ${response.body}");
+
         if (response.statusCode == 200) {
+          print("Meeting updated successfully.");
           _showToast('Meeting updated successfully!');
           Navigator.pop(context);
         } else {
+          print("Failed to update the meeting. Status code: ${response.statusCode}");
           Fluttertoast.showToast(
             msg: "Failed to update: ${response.body}",
             toastLength: Toast.LENGTH_SHORT,
@@ -78,6 +95,7 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
           );
         }
       } catch (e) {
+        print("An error occurred while updating the meeting: $e");
         Fluttertoast.showToast(
           msg: 'Error: $e',
           toastLength: Toast.LENGTH_SHORT,
@@ -88,8 +106,11 @@ class _EditMeetingScreenState extends State<EditMeetingScreen> {
           fontSize: 16.0,
         );
       }
+    } else {
+      print("Form validation failed. Please correct the inputs.");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

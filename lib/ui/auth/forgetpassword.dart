@@ -70,7 +70,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
           ? Colors.white

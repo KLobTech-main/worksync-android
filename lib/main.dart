@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     debugPrint("Theme in MyApp: ${themeProvider.themeData.brightness}");
 

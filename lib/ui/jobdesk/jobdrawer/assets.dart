@@ -25,7 +25,7 @@ class _AssetsDialogState extends State<AssetsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return AlertDialog(
       title: Text(
         "Employee Assets",

@@ -32,7 +32,7 @@ class _TaskOverviewScreenState extends State<TaskOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return SafeArea(
       child: Scaffold(
         backgroundColor: themeProvider.themeData.brightness == Brightness.light
@@ -178,6 +178,10 @@ class _TaskOverviewScreenState extends State<TaskOverviewScreen> {
                             : Color(0xFF57C9E7),
                       ));
                     } else if (snapshot.hasError) {
+                      if (snapshot.error.toString().contains("404")) {
+                        // Specific handling for "No tasks found (404)"
+                        return Center(child: Text('No tasks available.'));
+                      }
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(child: Text('No tasks available.'));
@@ -276,7 +280,7 @@ class TaskProgressCard extends StatefulWidget {
 
 class _TaskProgressCardState extends State<TaskProgressCard> {
   void _showFullDescription(BuildContext context, String description) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     showDialog(
       context: context,
@@ -320,7 +324,7 @@ class _TaskProgressCardState extends State<TaskProgressCard> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     return Card(
       elevation: 4,

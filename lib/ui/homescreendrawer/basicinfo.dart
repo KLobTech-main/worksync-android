@@ -49,7 +49,7 @@ class _BasicInformationPageState extends State<BasicInformationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
           ? const Color.fromARGB(255, 246, 244, 244)
@@ -127,7 +127,7 @@ class _BasicInformationPageState extends State<BasicInformationPage> {
   }
 
   Widget _buildHeaderSection() {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return Container(
       decoration: BoxDecoration(
         color: themeProvider.themeData.brightness == Brightness.light
@@ -166,7 +166,7 @@ class _BasicInformationPageState extends State<BasicInformationPage> {
   }
 
   Widget _buildInfoCard(String title, String value, IconData icon) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

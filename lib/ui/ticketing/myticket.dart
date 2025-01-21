@@ -2,6 +2,7 @@ import 'package:dass/colortheme/theme_maneger.dart';
 import 'package:dass/ui/ticketing/raiseticket.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../webservices/api.dart';
@@ -239,7 +240,30 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                     );
                     // Refresh UI
                     _refreshTickets();
-                  } else {
+                  }
+                  else if (response.statusCode == 404) {
+                    Fluttertoast.showToast(
+                      msg: 'Ticket Not Found',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  }
+                  else if (response.statusCode == 401) {
+                    Fluttertoast.showToast(
+                      msg: 'Invalid Or Expired Token',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  }
+                  else {
                     Fluttertoast.showToast(
                       msg: 'Failed to update ticket: ${response.body}',
                       toastLength: Toast.LENGTH_SHORT,
@@ -267,7 +291,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                 style: TextStyle(
                     color:
                         themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.white
+                            ? Colors.indigo.shade900
                             : Colors.white),
               ),
             ),
@@ -441,7 +465,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                               ),
                             ),
                             Text(
-                              ticket['createdAt'] ?? '',
+                              _formatDateTime(ticket['createdAt']) ?? '',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: themeProvider.themeData.brightness ==
@@ -463,4 +487,21 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
       ),
     );
   }
+  String _formatDateTime(String? isoDate) {
+    if (isoDate == null || isoDate.isEmpty) {
+      return "No Date Available";
+    }
+
+    try {
+      // Parse the ISO string to DateTime
+      DateTime dateTime = DateTime.parse(isoDate);
+
+      // Format the date and time using intl
+      String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+      return formattedDate;
+    } catch (e) {
+      return "Invalid Date Format";
+    }
+  }
+
 }

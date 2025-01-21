@@ -13,7 +13,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   bool isAccepted = false;
 
   void _showToast() {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     Fluttertoast.showToast(
       msg: "Your Terms & Conditions have been successfully accepted.",
       toastLength: Toast.LENGTH_SHORT,
@@ -29,7 +29,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
           ? const Color.fromARGB(255, 246, 244, 244)

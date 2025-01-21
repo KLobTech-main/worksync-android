@@ -153,7 +153,7 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     final isDark = themeProvider.themeData.brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
     final fieldColor = isDark ? Color(0xFF1C1F26) : Colors.white;

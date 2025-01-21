@@ -135,10 +135,10 @@ class _DocumentPageState extends State<DocumentPage> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              icon: const Icon(Icons.download, color: Colors.green),
-              onPressed: () => downloadFile(doc.blobUrl!, doc.fileName!),
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.download, color: Colors.green),
+            //   onPressed: () => downloadFile(doc.blobUrl!, doc.fileName!),
+            // ),
             IconButton(
               icon: Icon(
                 Icons.remove_red_eye,

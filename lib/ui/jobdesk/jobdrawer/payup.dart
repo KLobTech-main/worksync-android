@@ -25,7 +25,7 @@ class _PaySlipScreenState extends State<PaySlipScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
           ? const Color.fromARGB(255, 246, 244, 244)

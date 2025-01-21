@@ -63,7 +63,7 @@ class FAQPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
 
     return Scaffold(
       backgroundColor: themeProvider.themeData.brightness == Brightness.light
