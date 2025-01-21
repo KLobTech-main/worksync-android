@@ -1,8 +1,8 @@
 import 'package:dass/colortheme/theme_maneger.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart'; // For checking platform (web vs mobile)
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Import fluttertoast package
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 
@@ -155,7 +155,7 @@ class _DocumentPageState extends State<DocumentPage> {
   }
 
   Future<void> downloadFile(String url, String fileName) async {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
     try {
       Fluttertoast.showToast(
         msg: "$fileName downloaded successfully.",
