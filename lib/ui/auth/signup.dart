@@ -194,263 +194,256 @@ class _SignupState extends State<Signup> {
       ),
       body: Stack(
         children: [
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildTextField(
-                      controller: _userNameController,
-                      label: 'Name',
-                      validator: appValidator.validateUsername,
-                      textColor: textColor,
-                      fieldColor: fieldColor,
-                    ),
-                    SizedBox(height: 20),
-                    _buildTextField(
-                      controller: _emailController,
-                      label: 'Email',
-                      keyboardType: TextInputType.emailAddress,
-                      validator: appValidator.validateEmail,
-                      textColor: textColor,
-                      fieldColor: fieldColor,
-                    ),
-                    SizedBox(height: 20),
-                    _buildTextField(
-                      controller: _mobileNoController,
-                      label: 'Mobile Number',
-                      keyboardType: TextInputType.phone,
-                      validator: appValidator.validateMobileNo,
-                      textColor: textColor,
-                      fieldColor: fieldColor,
-                    ),
-                    SizedBox(height: 20),
-                    _buildTextField(
-                      controller: _passwordController,
-                      label: 'Password',
-                      obscureText: !_passwordVisible,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _passwordVisible = !_passwordVisible;
-                          });
-                        },
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildTextField(
+                    controller: _userNameController,
+                    label: 'Name',
+                    validator: appValidator.validateUsername,
+                    textColor: textColor,
+                    fieldColor: fieldColor,
+                  ),
+                  SizedBox(height: 20),
+                  _buildTextField(
+                    controller: _emailController,
+                    label: 'Email',
+                    keyboardType: TextInputType.emailAddress,
+                    validator: appValidator.validateEmail,
+                    textColor: textColor,
+                    fieldColor: fieldColor,
+                  ),
+                  SizedBox(height: 20),
+                  _buildTextField(
+                    controller: _mobileNoController,
+                    label: 'Mobile Number',
+                    keyboardType: TextInputType.phone,
+                    validator: appValidator.validateMobileNo,
+                    textColor: textColor,
+                    fieldColor: fieldColor,
+                  ),
+                  SizedBox(height: 20),
+                  _buildTextField(
+                    controller: _passwordController,
+                    label: 'Password',
+                    obscureText: !_passwordVisible,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter your password";
-                        }
-                        if (value.length < 6) {
-                          return "Password must be at least 6 characters";
-                        }
-                        return null;
-                      },
-                      textColor: textColor,
-                      fieldColor: fieldColor,
-                    ),
-                    SizedBox(height: 20),
-                    // _buildTextField(
-                    //   controller: _joiningDateController,
-                    //   label: 'Joining Date',
-                    //   validator: appValidator.validateJoinDate,
-                    //   readOnly: true,
-                    //   suffixIcon: Icon(Icons.calendar_today),
-                    //   onTap: () async {
-                    //     DateTime? pickedDate = await showDatePicker(
-                    //       context: context,
-                    //       initialDate: DateTime.now(),
-                    //       firstDate: DateTime(2000),
-                    //       lastDate: DateTime(2100),
-                    //     );
-
-                    //     if (pickedDate != null) {
-                    //       String formattedDate =
-                    //           "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-                    //       setState(() {
-                    //         _joiningDateController.text = formattedDate;
-                    //       });
-                    //     }
-                    //   },
-                    // ),
-                    // SizedBox(height: 20),
-                    _buildTextField(
-                      controller: _dobController,
-                      label: 'Date of Birth',
-                      readOnly: true,
-                      onTap: _selectDOB,
-                      suffixIcon: Icon(Icons.calendar_today),
-                      validator: (value) => value?.isEmpty == true
-                          ? "Please select your DOB"
-                          : null,
-                      textColor: textColor,
-                      fieldColor: fieldColor,
-                    ),
-                    // SizedBox(height: 20),
-                    // _buildTextField(
-                    //     controller: _departmentController,
-                    //     label: 'Department',
-                    //     validator: appValidator.validateDepartment),
-                    SizedBox(height: 40),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              isChecked = value!;
-                            });
-                          },
-                          activeColor: isDark
-                              ? Color(0xFF57C9E7)
-                              : Colors.indigo.shade900, // Checkbox color
-                          checkColor: isDark
-                              ? Colors.black
-                              : Colors.white, // Checkmark color
-                          side: BorderSide(
-                            color: isDark
-                                ? Colors.white
-                                : Colors.black, // Border color for the checkbox
-                            width: 1.5,
-                          ),
-                        ),
-                        Flexible(
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: "By Signing up, you agree to the ",
-                                    style: TextStyle(
-                                      color:
-                                          themeProvider.themeData.brightness ==
-                                                  Brightness.light
-                                              ? Colors.black
-                                              : Colors.white,
-                                    )),
-                                TextSpan(
-                                  text: "Terms ",
-                                  style: TextStyle(
-                                    color: themeProvider.themeData.brightness ==
-                                            Brightness.light
-                                        ? Color.fromRGBO(127, 61, 255, 1)
-                                        : Color(0xFF57C9E7),
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: "of Service and Privacy Policy",
-                                  style: TextStyle(
-                                    color: themeProvider.themeData.brightness ==
-                                            Brightness.light
-                                        ? Color.fromRGBO(127, 61, 255, 1)
-                                        : Color(0xFF57C9E7),
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    Container(
-                      height: 50,
-                      width: double.infinity,
-                      child: GestureDetector(
-                        onTapDown: (_) {
-                          setState(() {
-                            _isPressed =
-                                true; // Trigger animation on light press
-                          });
-                        },
-                        onTapUp: (_) {
-                          setState(() {
-                            _isPressed =
-                                false; // Revert animation when released
-                          });
-                        },
-                        onTapCancel: () {
-                          setState(() {
-                            _isPressed =
-                                false; // Revert animation if press is canceled
-                          });
-                        },
-                        child: AnimatedScale(
-                          scale: _isPressed
-                              ? 0.95
-                              : 1.0, // Zoom in on press, zoom out when released
-                          duration: Duration(
-                              milliseconds: 100), // Duration of the animation
-                          child: ElevatedButton(
-                            onPressed: _isLoader ? null : _submitForm,
-                            child: Text(
-                              "Sign Up",
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                            // style: ButtonStyle(
-                            //   backgroundColor:
-                            //       MaterialStateProperty.resolveWith<Color>((states) {
-                            //     if (states.contains(MaterialState.pressed)) {
-                            //       return Colors.indigo.shade900; // Color when pressed
-                            //     }
-                            //     return Colors.indigo.shade900; // Default color
-                            //   }),
-                            // ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.indigo.shade900
-                                      : Color(0xFF57C9E7),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 20),
-                    TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => LogIn()),
-                        );
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
                       },
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Already have an account? ",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 17),
-                            ),
-                            TextSpan(
-                              text: "Login",
-                              style: TextStyle(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Color.fromRGBO(127, 61, 255, 1)
-                                    : Color(0xFF57C9E7),
-                                fontSize: 17,
-                                decoration: TextDecoration.underline,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your password";
+                      }
+                      if (value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      }
+                      return null;
+                    },
+                    textColor: textColor,
+                    fieldColor: fieldColor,
+                  ),
+                  SizedBox(height: 20),
+                  // _buildTextField(
+                  //   controller: _joiningDateController,
+                  //   label: 'Joining Date',
+                  //   validator: appValidator.validateJoinDate,
+                  //   readOnly: true,
+                  //   suffixIcon: Icon(Icons.calendar_today),
+                  //   onTap: () async {
+                  //     DateTime? pickedDate = await showDatePicker(
+                  //       context: context,
+                  //       initialDate: DateTime.now(),
+                  //       firstDate: DateTime(2000),
+                  //       lastDate: DateTime(2100),
+                  //     );
+
+                  //     if (pickedDate != null) {
+                  //       String formattedDate =
+                  //           "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                  //       setState(() {
+                  //         _joiningDateController.text = formattedDate;
+                  //       });
+                  //     }
+                  //   },
+                  // ),
+                  // SizedBox(height: 20),
+                  _buildTextField(
+                    controller: _dobController,
+                    label: 'Date of Birth',
+                    readOnly: true,
+                    onTap: _selectDOB,
+                    suffixIcon: Icon(Icons.calendar_today),
+                    validator: (value) => value?.isEmpty == true
+                        ? "Please select your DOB"
+                        : null,
+                    textColor: textColor,
+                    fieldColor: fieldColor,
+                  ),
+                  // SizedBox(height: 20),
+                  // _buildTextField(
+                  //     controller: _departmentController,
+                  //     label: 'Department',
+                  //     validator: appValidator.validateDepartment),
+                  SizedBox(height: 40),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                        },
+                        activeColor: isDark
+                            ? Color(0xFF57C9E7)
+                            : Colors.indigo.shade900, // Checkbox color
+                        checkColor: isDark
+                            ? Colors.black
+                            : Colors.white, // Checkmark color
+                        side: BorderSide(
+                          color: isDark
+                              ? Colors.white
+                              : Colors.black, // Border color for the checkbox
+                          width: 1.5,
+                        ),
+                      ),
+                      Flexible(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                  text: "By Signing up, you agree to the ",
+                                  style: TextStyle(
+                                    color: themeProvider.themeData.brightness ==
+                                            Brightness.light
+                                        ? Colors.black
+                                        : Colors.white,
+                                  )),
+                              TextSpan(
+                                text: "Terms ",
+                                style: TextStyle(
+                                  color: themeProvider.themeData.brightness ==
+                                          Brightness.light
+                                      ? Color.fromRGBO(127, 61, 255, 1)
+                                      : Color(0xFF57C9E7),
+                                  fontSize: 15,
+                                ),
                               ),
-                            ),
-                          ],
+                              TextSpan(
+                                text: "of Service and Privacy Policy",
+                                style: TextStyle(
+                                  color: themeProvider.themeData.brightness ==
+                                          Brightness.light
+                                      ? Color.fromRGBO(127, 61, 255, 1)
+                                      : Color(0xFF57C9E7),
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    child: GestureDetector(
+                      onTapDown: (_) {
+                        setState(() {
+                          _isPressed = true; // Trigger animation on light press
+                        });
+                      },
+                      onTapUp: (_) {
+                        setState(() {
+                          _isPressed = false; // Revert animation when released
+                        });
+                      },
+                      onTapCancel: () {
+                        setState(() {
+                          _isPressed =
+                              false; // Revert animation if press is canceled
+                        });
+                      },
+                      child: AnimatedScale(
+                        scale: _isPressed
+                            ? 0.95
+                            : 1.0, // Zoom in on press, zoom out when released
+                        duration: Duration(
+                            milliseconds: 100), // Duration of the animation
+                        child: ElevatedButton(
+                          onPressed: _isLoader ? null : _submitForm,
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                          // style: ButtonStyle(
+                          //   backgroundColor:
+                          //       MaterialStateProperty.resolveWith<Color>((states) {
+                          //     if (states.contains(MaterialState.pressed)) {
+                          //       return Colors.indigo.shade900; // Color when pressed
+                          //     }
+                          //     return Colors.indigo.shade900; // Default color
+                          //   }),
+                          // ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                themeProvider.themeData.brightness ==
+                                        Brightness.light
+                                    ? Colors.indigo.shade900
+                                    : Color(0xFF57C9E7),
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LogIn()),
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Already have an account? ",
+                            style: TextStyle(color: Colors.grey, fontSize: 17),
+                          ),
+                          TextSpan(
+                            text: "Login",
+                            style: TextStyle(
+                              color: themeProvider.themeData.brightness ==
+                                      Brightness.light
+                                  ? Color.fromRGBO(127, 61, 255, 1)
+                                  : Color(0xFF57C9E7),
+                              fontSize: 17,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
