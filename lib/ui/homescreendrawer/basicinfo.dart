@@ -197,7 +197,7 @@ class _BasicInformationPageState extends State<BasicInformationPage> {
           style: TextStyle(
               fontSize: 14,
               color: themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
+                  ? Colors.grey.shade700
                   : Colors.grey),
         ),
       ),

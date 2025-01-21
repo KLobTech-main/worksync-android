@@ -52,6 +52,7 @@ class _LeaveRequestPageState extends State<LeaveRequestPage> {
   }
 
   Future<void> pickDate(BuildContext context, {bool isStartDate = true}) async {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     DateTime initialDate = DateTime.now();
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -60,15 +61,30 @@ class _LeaveRequestPageState extends State<LeaveRequestPage> {
       lastDate: DateTime(2100),
       builder: (BuildContext context, Widget? child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Color(0xFF57C9E7), // Header background color
-              onPrimary: Colors.white, // Header text color
-              surface: Colors.black, // Dialog background color
-              onSurface: Colors.white, // Text color
-            ),
+          data: themeProvider.themeData.copyWith(
             dialogBackgroundColor:
-                Colors.grey[900], // Background color for the dialog
+                themeProvider.themeData.brightness == Brightness.dark
+                    ? Colors.grey.shade900
+                    : Colors.white,
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    themeProvider.themeData.brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.indigo.shade900,
+              ),
+            ),
+            colorScheme: themeProvider.themeData.colorScheme.copyWith(
+              primary: themeProvider.themeData.brightness == Brightness.dark
+                  ? Color(0xFF57C9E7)
+                  : Colors.indigo.shade900,
+              surface: themeProvider.themeData.brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              onSurface: themeProvider.themeData.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
           ),
           child: child!,
         );
