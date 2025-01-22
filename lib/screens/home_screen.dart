@@ -386,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> endPunchOutTime() async {
+  Future<void> PunchOutTime() async {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
     // Show confirmation dialog before proceeding
@@ -452,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    if (!mounted) return; // Ensure the widget is still in the widget tree
+    if (!mounted) return;
     setState(() {
       isPunchOutLoading = true;
       hasPunchedIn = false;
@@ -474,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
           punchInId!, widget.name!, punchOutTime, context);
 
       if (response.statusCode == 200) {
-        if (!mounted) return; // Ensure the widget is still in the widget tree
+        if (!mounted) return;
         setState(() {
           isPunchOutActive = false;
         });
@@ -484,8 +484,17 @@ class _HomeScreenState extends State<HomeScreen> {
           gravity: ToastGravity.BOTTOM,
           backgroundColor:
               themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
+                  ? Colors.indigo.shade900
                   : Color(0xFF57C9E7),
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      } else if (response.statusCode == 404) {
+        Fluttertoast.showToast(
+          msg: "Attendance record not found",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0,
         );
@@ -509,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
         fontSize: 16.0,
       );
     } finally {
-      if (!mounted) return; // Ensure the widget is still in the widget tree
+      if (!mounted) return;
       setState(() {
         isPunchOutLoading = false;
       });
@@ -1118,7 +1127,7 @@ class _HomeScreenState extends State<HomeScreen> {
               await handlePunchIn();
             } else {
               // Handle Punch Out if already punched in
-              await endPunchOutTime();
+              await PunchOutTime();
             }
           },
           backgroundColor: hasPunchedIn
