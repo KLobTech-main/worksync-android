@@ -15,7 +15,6 @@ import 'package:dass/ui/homescreendrawer/termsandcond.dart';
 import 'package:dass/ui/jobdesk/jobinfo.dart';
 import 'package:dass/ui/leave/leave_summary.dart';
 import 'package:dass/ui/meeting/meetingscreen.dart';
-import 'package:dass/ui/taskandlogs/createnewtask.dart';
 import 'package:dass/ui/taskandlogs/taskoverview.dart';
 import 'package:dass/ui/ticketing/myticket.dart';
 import 'package:dass/ui/timelogs/timelogscreen.dart';
@@ -579,33 +578,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: ListView(
                 children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.settings,
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.indigo.shade900
-                              : Color(0xFF57C9E7),
-                    ),
-                    title: Text(
-                      "Settings",
-                      style: TextStyle(
-                          color: themeProvider.themeData.brightness ==
-                                  Brightness.light
-                              ? Colors.indigo.shade900
-                              : Color(0xFF57C9E7),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage(
-                                    name: widget.name,
-                                    email: widget.email,
-                                  )));
-                    },
-                  ),
                   ExpansionTile(
                     leading: Icon(
                       Icons.support_agent,
@@ -733,6 +705,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   ListTile(
                     leading: Icon(
+                      Icons.settings,
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.indigo.shade900
+                              : Color(0xFF57C9E7),
+                    ),
+                    title: Text(
+                      "Settings",
+                      style: TextStyle(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.indigo.shade900
+                              : Color(0xFF57C9E7),
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage(
+                                    name: widget.name,
+                                    email: widget.email,
+                                  )));
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
                       Icons.announcement,
                       color:
                           themeProvider.themeData.brightness == Brightness.light
@@ -778,6 +777,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => AboutPage()));
                     },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.calendar_month,
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.indigo.shade900
+                              : Color(0xFF57C9E7),
+                    ),
+                    title: Text(
+                      "Google Calendar",
+                      style: TextStyle(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.indigo.shade900
+                              : Color(0xFF57C9E7),
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onTap: () {},
                   ),
                   ListTile(
                     leading: _isLoading
@@ -1044,20 +1062,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               )),
                     );
                   }),
-                  _buildGridOption(Icons.task_outlined, "Create Task",
-                      onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateTaskScreen(
-                          name: widget.name,
-                          email: widget.email,
-                        ),
-                      ),
-                    );
-                    debugPrint("name : ${widget.name}");
-                    debugPrint("email : ${widget.email}");
-                  }),
+                  // _buildGridOption(Icons.task_outlined, "Create Task",
+                  //     onTap: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => CreateTaskScreen(
+                  //         name: widget.name,
+                  //         email: widget.email,
+                  //       ),
+                  //     ),
+                  //   );
+                  //   debugPrint("name : ${widget.name}");
+                  //   debugPrint("email : ${widget.email}");
+                  // }),
                   _buildGridOption(Icons.support_agent, "Ticket", onTap: () {
                     Navigator.push(
                       context,
@@ -1068,6 +1086,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               )),
                     );
                   }),
+                  _buildGridOption(Icons.list, "ToDo List", onTap: () {}),
+                  _buildGridOption(
+                      Icons.admin_panel_settings_outlined, "project panel",
+                      onTap: () {}),
                   _buildGridOption(Icons.holiday_village, "Holiday", onTap: () {
                     Navigator.push(
                       context,

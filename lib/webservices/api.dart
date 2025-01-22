@@ -988,9 +988,9 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => PaySlipModel.fromJson(json)).toList();
-      } else if (response.statusCode == 204) {
+      } else if (response.statusCode == 404) {
         // Handle the 204 No Content response
-        print('No payslips found. Status code: 204');
+        print('No payslips found. Status code: 404');
         return []; // Return an empty list if no content
       } else {
         print('Error: ${response.statusCode}');
@@ -998,7 +998,6 @@ class ApiService {
         throw Exception('Failed to load payslips');
       }
     } catch (e) {
-      // Print the exception in case of an error
       print('Exception occurred: $e');
       throw Exception('Failed to load payslips: $e');
     }
