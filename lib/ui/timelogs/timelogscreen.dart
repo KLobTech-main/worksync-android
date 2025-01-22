@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:dass/colortheme/theme_maneger.dart';
 import 'package:dass/modal/timelogmodelnew.dart';
 import 'package:dass/webservices/api.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   final String? name;
@@ -54,7 +49,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    // _loadUserData();
     //checkAttendanceStatus();
 
     // Use the actual email from the widget, not a hardcoded string
@@ -127,36 +122,36 @@ class _DashboardState extends State<Dashboard> {
   //   );
   // }
 
-  Future<void> _loadUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData =
-        prefs.getString(widget.email!); // Retrieve user data by email key
-    if (userData != null) {
-      Map<String, dynamic> data =
-          jsonDecode(userData); // Decode the JSON string
-      setState(() {
-        hasPunchedIn = data['hasPunchedIn'] ?? false; // Load user-specific data
-        isTeaBreakActive = data['isTeaBreakActive'] ?? false;
-        isLunchBreakActive = data['isLunchBreakActive'] ?? false;
-        punchInTime = data['punchInTime'];
-        punchInId = data['punchInId'];
-        lateMessage = data['lateMessage'];
-      });
-    }
-  }
+  // Future<void> _loadUserData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userData =
+  //       prefs.getString(widget.email!); // Retrieve user data by email key
+  //   if (userData != null) {
+  //     Map<String, dynamic> data =
+  //         jsonDecode(userData); // Decode the JSON string
+  //     setState(() {
+  //       hasPunchedIn = data['hasPunchedIn'] ?? false; // Load user-specific data
+  //       isTeaBreakActive = data['isTeaBreakActive'] ?? false;
+  //       isLunchBreakActive = data['isLunchBreakActive'] ?? false;
+  //       punchInTime = data['punchInTime'];
+  //       punchInId = data['punchInId'];
+  //       lateMessage = data['lateMessage'];
+  //     });
+  //   }
+  // }
 
-  Future<void> _saveUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    Map<String, dynamic> data = {
-      'hasPunchedIn': hasPunchedIn,
-      'isTeaBreakActive': isTeaBreakActive,
-      'isLunchBreakActive': isLunchBreakActive,
-      'punchInTime': punchInTime,
-      'punchInId': punchInId,
-      'lateMessage': lateMessage,
-    };
-    await prefs.setString(widget.email!, jsonEncode(data));
-  }
+  // Future<void> _saveUserData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   Map<String, dynamic> data = {
+  //     'hasPunchedIn': hasPunchedIn,
+  //     'isTeaBreakActive': isTeaBreakActive,
+  //     'isLunchBreakActive': isLunchBreakActive,
+  //     'punchInTime': punchInTime,
+  //     'punchInId': punchInId,
+  //     'lateMessage': lateMessage,
+  //   };
+  //   await prefs.setString(widget.email!, jsonEncode(data));
+  // }
 
   // Fetch Time Log API
   Future<void> fetchTimeLog(String email, String year, String month) async {
@@ -180,840 +175,840 @@ class _DashboardState extends State<Dashboard> {
     debugPrint("timeLogData: $timeLogData");
   }
 
-  Future<void> handlePunchIn() async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    // Show confirmation dialog before proceeding
-    bool? confirmation = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
-                  : Color(0xFF1C1F26),
-          title: Text("Confirm Punch In",
-              style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              )),
-          content: Text("Are you sure you want to punch in?",
-              style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              )),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text("Cancel",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white,
-                  )),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text("Confirm",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.blue
-                            : const Color(0xFF57C9E7),
-                  )),
-            ),
-          ],
-        );
-      },
-    );
+  // Future<void> handlePunchIn() async {
+  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  //   // Show confirmation dialog before proceeding
+  //   bool? confirmation = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.white
+  //                 : Color(0xFF1C1F26),
+  //         title: Text("Confirm Punch In",
+  //             style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white,
+  //             )),
+  //         content: Text("Are you sure you want to punch in?",
+  //             style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white,
+  //             )),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //             child: Text("Cancel",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.black
+  //                           : Colors.white,
+  //                 )),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //             child: Text("Confirm",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.blue
+  //                           : const Color(0xFF57C9E7),
+  //                 )),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    // If user cancels the confirmation, do nothing
-    if (confirmation != true) {
-      return;
-    }
+  //   // If user cancels the confirmation, do nothing
+  //   if (confirmation != true) {
+  //     return;
+  //   }
 
-    // Check persistent storage for today's punch-in status
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? lastPunchDateForUser =
-        prefs.getString('lastPunchDate_${widget.email}');
+  //   // Check persistent storage for today's punch-in status
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? lastPunchDateForUser =
+  //       prefs.getString('lastPunchDate_${widget.email}');
 
-    if (lastPunchDateForUser == DateTime.now().toIso8601String()) {
-      Fluttertoast.showToast(
-        msg: "You have already punched in today.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
+  //   if (lastPunchDateForUser == DateTime.now().toIso8601String()) {
+  //     Fluttertoast.showToast(
+  //       msg: "You have already punched in today.",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     return;
+  //   }
 
-    setState(() {
-      isPunchInLoading = true;
-      hasPunchedIn = true;
-    });
+  //   setState(() {
+  //     isPunchInLoading = true;
+  //     hasPunchedIn = true;
+  //   });
 
-    // Prepare API payload
-    String punchInTime = DateTime.now().toIso8601String();
-    String email = widget.email ?? ""; // Ensure email is not null
+  //   // Prepare API payload
+  //   String punchInTime = DateTime.now().toIso8601String();
+  //   String email = widget.email ?? ""; // Ensure email is not null
 
-    Map<String, dynamic> payload = {
-      "punchInTime": punchInTime,
-      "email": email, // Add email to the payload as required by the API
-    };
+  //   Map<String, dynamic> payload = {
+  //     "punchInTime": punchInTime,
+  //     "email": email, // Add email to the payload as required by the API
+  //   };
 
-    print("PunchIn Payload: $payload");
+  //   print("PunchIn Payload: $payload");
 
-    try {
-      // Call the API
-      final response =
-          await ApiService.punchIn(payload, punchInTime, email, context);
+  //   try {
+  //     // Call the API
+  //     final response =
+  //         await ApiService.punchIn(payload, punchInTime, email, context);
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
+  //     if (response.statusCode == 200) {
+  //       final responseData = json.decode(response.body);
 
-        setState(() {
-          isPunchInLoading = false;
-          this.punchInTime = punchInTime;
-          punchInId = responseData['id'];
+  //       setState(() {
+  //         isPunchInLoading = false;
+  //         this.punchInTime = punchInTime;
+  //         punchInId = responseData['id'];
 
-          // Store punch-in status with the current date
-          prefs.setString(
-              'lastPunchDate_$email', DateTime.now().toIso8601String());
+  //         // Store punch-in status with the current date
+  //         prefs.setString(
+  //             'lastPunchDate_$email', DateTime.now().toIso8601String());
 
-          // Check for late punch-in
-          DateTime punchInDateTime = DateTime.parse(punchInTime);
-          DateTime lateThreshold = DateTime(
-            punchInDateTime.year,
-            punchInDateTime.month,
-            punchInDateTime.day,
-            10,
-            30,
-          );
+  //         // Check for late punch-in
+  //         DateTime punchInDateTime = DateTime.parse(punchInTime);
+  //         DateTime lateThreshold = DateTime(
+  //           punchInDateTime.year,
+  //           punchInDateTime.month,
+  //           punchInDateTime.day,
+  //           10,
+  //           30,
+  //         );
 
-          if (punchInDateTime.isAfter(lateThreshold)) {
-            Duration lateDuration = punchInDateTime.difference(lateThreshold);
-            lateMessage =
-                "You are late by ${lateDuration.inHours} hours and ${lateDuration.inMinutes % 60} minutes.";
-          } else {
-            lateMessage = null;
-          }
-        });
+  //         if (punchInDateTime.isAfter(lateThreshold)) {
+  //           Duration lateDuration = punchInDateTime.difference(lateThreshold);
+  //           lateMessage =
+  //               "You are late by ${lateDuration.inHours} hours and ${lateDuration.inMinutes % 60} minutes.";
+  //         } else {
+  //           lateMessage = null;
+  //         }
+  //       });
 
-        await _saveUserData();
+  //       await _saveUserData();
 
-        // Show success message using Toast
-        Fluttertoast.showToast(
-          msg: "Punch In Successful!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
-                  : Color(0xFF57C9E7),
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        // Handle API error response with Toast
-        Fluttertoast.showToast(
-          msg: "Failed to Punch In: ${response.body}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } catch (e) {
-      // Handle exceptions with Toast
-      Fluttertoast.showToast(
-        msg: "Error: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      // Hide loading indicator
-      setState(() {
-        isPunchInLoading = false;
-      });
-    }
-  }
+  //       // Show success message using Toast
+  //       Fluttertoast.showToast(
+  //         msg: "Punch In Successful!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.indigo.shade900 // Default active color in light mode
+  //                 : Color(0xFF57C9E7),
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     } else {
+  //       // Handle API error response with Toast
+  //       Fluttertoast.showToast(
+  //         msg: "Failed to Punch In: ${response.body}",
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     // Handle exceptions with Toast
+  //     Fluttertoast.showToast(
+  //       msg: "Error: $e",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     // Hide loading indicator
+  //     setState(() {
+  //       isPunchInLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> handleTeaBreakStart() async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    // Show confirmation dialog before proceeding
-    bool? confirmation = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
-                  : Color(0xFF1C1F26),
-          title: Text(
-            "Start Tea Break",
-            style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white),
-          ),
-          content: Text(
-            "Are you sure you want to start the tea break?",
-            style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black
-                              : Colors.white),
-                )),
-            TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(
-                  "Confirm",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.blue
-                            : const Color(0xFF57C9E7),
-                  ),
-                ))
-          ],
-        );
-      },
-    );
+  // Future<void> handleTeaBreakStart() async {
+  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  //   // Show confirmation dialog before proceeding
+  //   bool? confirmation = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.white
+  //                 : Color(0xFF1C1F26),
+  //         title: Text(
+  //           "Start Tea Break",
+  //           style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white),
+  //         ),
+  //         content: Text(
+  //           "Are you sure you want to start the tea break?",
+  //           style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //               onPressed: () => Navigator.of(context).pop(false),
+  //               child: Text(
+  //                 "Cancel",
+  //                 style: TextStyle(
+  //                     color:
+  //                         themeProvider.themeData.brightness == Brightness.light
+  //                             ? Colors.black
+  //                             : Colors.white),
+  //               )),
+  //           TextButton(
+  //               onPressed: () => Navigator.of(context).pop(true),
+  //               child: Text(
+  //                 "Confirm",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.blue
+  //                           : const Color(0xFF57C9E7),
+  //                 ),
+  //               ))
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    if (confirmation != true) return;
+  //   if (confirmation != true) return;
 
-    DateTime now = DateTime.now();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? lastTeaStartDateForUser =
-        prefs.getString('lastTeaStartDate_${widget.email}');
-    String todayDate = DateFormat('yyyy-MM-dd').format(now);
+  //   DateTime now = DateTime.now();
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? lastTeaStartDateForUser =
+  //       prefs.getString('lastTeaStartDate_${widget.email}');
+  //   String todayDate = DateFormat('yyyy-MM-dd').format(now);
 
-    // Check if tea break is already started today
-    if (lastTeaStartDateForUser == todayDate) {
-      Fluttertoast.showToast(
-        msg: "You have already started a tea break today.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
+  //   // Check if tea break is already started today
+  //   if (lastTeaStartDateForUser == todayDate) {
+  //     Fluttertoast.showToast(
+  //       msg: "You have already started a tea break today.",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     return;
+  //   }
 
-    setState(() {
-      isTeaBreakLoading = true;
-      isTeaBreakActive = true;
-    });
-    await _saveUserData();
-    await prefs.setString('lastTeaStartDate_${widget.email}', todayDate);
+  //   setState(() {
+  //     isTeaBreakLoading = true;
+  //     isTeaBreakActive = true;
+  //   });
+  //   await _saveUserData();
+  //   await prefs.setString('lastTeaStartDate_${widget.email}', todayDate);
 
-    String teaStartTime = now.toIso8601String();
-    String email = widget.email ?? "";
+  //   String teaStartTime = now.toIso8601String();
+  //   String email = widget.email ?? "";
 
-    Map<String, dynamic> payload = {
-      "teaStartTime": teaStartTime,
-      "email": email,
-      "id": punchInId,
-    };
+  //   Map<String, dynamic> payload = {
+  //     "teaStartTime": teaStartTime,
+  //     "email": email,
+  //     "id": punchInId,
+  //   };
 
-    try {
-      final response = await ApiService.teaStart(
-          payload, email, punchInId!, teaStartTime, context);
+  //   try {
+  //     final response = await ApiService.teaStart(
+  //         payload, email, punchInId!, teaStartTime, context);
 
-      if (response.statusCode == 200) {
-        setState(() {
-          isTeaBreakActive = true;
-        });
-        Fluttertoast.showToast(
-          msg: "Tea Break Started!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
-                  : Color(0xFF57C9E7),
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "Failed to start tea break: ${response.body}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Error: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      setState(() {
-        isTeaBreakLoading = false;
-      });
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         isTeaBreakActive = true;
+  //       });
+  //       Fluttertoast.showToast(
+  //         msg: "Tea Break Started!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.indigo.shade900 // Default active color in light mode
+  //                 : Color(0xFF57C9E7),
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     } else {
+  //       Fluttertoast.showToast(
+  //         msg: "Failed to start tea break: ${response.body}",
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Fluttertoast.showToast(
+  //       msg: "Error: $e",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isTeaBreakLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> handleTeaBreakEnd() async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    // Show confirmation dialog before proceeding
-    bool? confirmation = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
-                  : Color(0xFF1C1F26),
-          title: Text("End Tea Break",
-              style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              )),
-          content: Text("Are you sure you want to end the tea break?",
-              style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              )),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text("Cancel",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white,
-                  )),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text("Confirm",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.blue
-                            : const Color(0xFF57C9E7),
-                  )),
-            ),
-          ],
-        );
-      },
-    );
+  // Future<void> handleTeaBreakEnd() async {
+  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  //   // Show confirmation dialog before proceeding
+  //   bool? confirmation = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.white
+  //                 : Color(0xFF1C1F26),
+  //         title: Text("End Tea Break",
+  //             style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white,
+  //             )),
+  //         content: Text("Are you sure you want to end the tea break?",
+  //             style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white,
+  //             )),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //             child: Text("Cancel",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.black
+  //                           : Colors.white,
+  //                 )),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //             child: Text("Confirm",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.blue
+  //                           : const Color(0xFF57C9E7),
+  //                 )),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    if (confirmation != true) return;
+  //   if (confirmation != true) return;
 
-    if (punchInId == null) {
-      Fluttertoast.showToast(
-        msg: "Punch In first to end tea break!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
+  //   if (punchInId == null) {
+  //     Fluttertoast.showToast(
+  //       msg: "Punch In first to end tea break!",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.orange,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     return;
+  //   }
 
-    setState(() {
-      isTeaBreakLoading = true;
-      isTeaBreakActive = false;
-    });
+  //   setState(() {
+  //     isTeaBreakLoading = true;
+  //     isTeaBreakActive = false;
+  //   });
 
-    String teaEndTime = DateTime.now().toIso8601String();
-    String email = widget.email ?? "";
+  //   String teaEndTime = DateTime.now().toIso8601String();
+  //   String email = widget.email ?? "";
 
-    Map<String, dynamic> payload = {
-      "teaEndTime": teaEndTime,
-      "email": email,
-      "id": punchInId,
-    };
+  //   Map<String, dynamic> payload = {
+  //     "teaEndTime": teaEndTime,
+  //     "email": email,
+  //     "id": punchInId,
+  //   };
 
-    try {
-      final response = await ApiService.teaEnd(
-          payload, email, punchInId!, teaEndTime, context);
+  //   try {
+  //     final response = await ApiService.teaEnd(
+  //         payload, email, punchInId!, teaEndTime, context);
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        setState(() {
-          isTeaBreakActive = false;
-        });
-        Fluttertoast.showToast(
-          msg: "Tea Break Ended!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
-                  : Color(0xFF57C9E7),
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "Failed to end tea break: ${response.body}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Error: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      setState(() {
-        isTeaBreakLoading = false;
-      });
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final responseData = json.decode(response.body);
+  //       setState(() {
+  //         isTeaBreakActive = false;
+  //       });
+  //       Fluttertoast.showToast(
+  //         msg: "Tea Break Ended!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.indigo.shade900 // Default active color in light mode
+  //                 : Color(0xFF57C9E7),
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     } else {
+  //       Fluttertoast.showToast(
+  //         msg: "Failed to end tea break: ${response.body}",
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Fluttertoast.showToast(
+  //       msg: "Error: $e",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isTeaBreakLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> handleLunchBreakStart() async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    // Show confirmation dialog before proceeding
-    bool? confirmation = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
-                  : Color(0xFF1C1F26),
-          title: Text(
-            "Start Lunch Break",
-            style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white),
-          ),
-          content: Text(
-            "Are you sure you want to start the lunch break?",
-            style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(
-                "Cancel",
-                style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text("Confirm",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.blue
-                            : const Color(0xFF57C9E7),
-                  )),
-            ),
-          ],
-        );
-      },
-    );
+  // Future<void> handleLunchBreakStart() async {
+  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  //   // Show confirmation dialog before proceeding
+  //   bool? confirmation = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.white
+  //                 : Color(0xFF1C1F26),
+  //         title: Text(
+  //           "Start Lunch Break",
+  //           style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white),
+  //         ),
+  //         content: Text(
+  //           "Are you sure you want to start the lunch break?",
+  //           style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //             child: Text(
+  //               "Cancel",
+  //               style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.black
+  //                           : Colors.white),
+  //             ),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //             child: Text("Confirm",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.blue
+  //                           : const Color(0xFF57C9E7),
+  //                 )),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    if (confirmation != true) return;
-    DateTime now = DateTime.now();
+  //   if (confirmation != true) return;
+  //   DateTime now = DateTime.now();
 
-    // Retrieve shared preferences instance
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   // Retrieve shared preferences instance
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Get the stored date for this user's last lunch break
-    String? lastLunchStartDateForUser =
-        prefs.getString('lastLunchStartDate_${widget.email}');
+  //   // Get the stored date for this user's last lunch break
+  //   String? lastLunchStartDateForUser =
+  //       prefs.getString('lastLunchStartDate_${widget.email}');
 
-    // Format the current date for comparison
-    String todayDate = DateFormat('yyyy-MM-dd').format(now);
+  //   // Format the current date for comparison
+  //   String todayDate = DateFormat('yyyy-MM-dd').format(now);
 
-    // Check if the user has already started their lunch break today
-    if (lastLunchStartDateForUser == todayDate) {
-      Fluttertoast.showToast(
-        msg: "You have already started lunch break  today.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
-    // if (punchInId == null) {
-    //   Fluttertoast.showToast(
-    //     msg: "Punch In first to start a lunch break!",
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.BOTTOM,
-    //     backgroundColor: Colors.orange,
-    //     textColor: Colors.white,
-    //     fontSize: 16.0,
-    //   );
-    //   return;
-    // }
+  //   // Check if the user has already started their lunch break today
+  //   if (lastLunchStartDateForUser == todayDate) {
+  //     Fluttertoast.showToast(
+  //       msg: "You have already started lunch break  today.",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     return;
+  //   }
+  //   // if (punchInId == null) {
+  //   //   Fluttertoast.showToast(
+  //   //     msg: "Punch In first to start a lunch break!",
+  //   //     toastLength: Toast.LENGTH_SHORT,
+  //   //     gravity: ToastGravity.BOTTOM,
+  //   //     backgroundColor: Colors.orange,
+  //   //     textColor: Colors.white,
+  //   //     fontSize: 16.0,
+  //   //   );
+  //   //   return;
+  //   // }
 
-    setState(() {
-      isLunchBreakLoading = true;
-      isLunchBreakActive = true;
-    });
-    await _saveUserData();
-    // Save today's date for this user in shared preferences
-    await prefs.setString('lastLunchStartDate_${widget.email}', todayDate);
+  //   setState(() {
+  //     isLunchBreakLoading = true;
+  //     isLunchBreakActive = true;
+  //   });
+  //   await _saveUserData();
+  //   // Save today's date for this user in shared preferences
+  //   await prefs.setString('lastLunchStartDate_${widget.email}', todayDate);
 
-    String lunchStartTime = DateTime.now().toIso8601String();
-    String email = widget.email ?? "";
+  //   String lunchStartTime = DateTime.now().toIso8601String();
+  //   String email = widget.email ?? "";
 
-    Map<String, dynamic> payload = {
-      "lunchStartTime": lunchStartTime,
-      "email": widget.email,
-      "id": punchInId,
-    };
+  //   Map<String, dynamic> payload = {
+  //     "lunchStartTime": lunchStartTime,
+  //     "email": widget.email,
+  //     "id": punchInId,
+  //   };
 
-    print("email:$widget.email");
-    print("id:$widget.punchInId");
-    print("Payload: $payload");
+  //   print("email:$widget.email");
+  //   print("id:$widget.punchInId");
+  //   print("Payload: $payload");
 
-    try {
-      final response = await ApiService.startLunchBreak(
-          payload, widget.email!, punchInId!, lunchStartTime, context);
+  //   try {
+  //     final response = await ApiService.startLunchBreak(
+  //         payload, widget.email!, punchInId!, lunchStartTime, context);
 
-      if (response.statusCode == 200) {
-        setState(() {
-          isLunchBreakActive = true;
-        });
-        Fluttertoast.showToast(
-          msg: "Lunch Break Started!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
-                  : Color(0xFF57C9E7),
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "Failed to start lunch break: ${response.body}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Error: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      setState(() {
-        isLunchBreakLoading = false;
-      });
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         isLunchBreakActive = true;
+  //       });
+  //       Fluttertoast.showToast(
+  //         msg: "Lunch Break Started!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.indigo.shade900 // Default active color in light mode
+  //                 : Color(0xFF57C9E7),
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     } else {
+  //       Fluttertoast.showToast(
+  //         msg: "Failed to start lunch break: ${response.body}",
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Fluttertoast.showToast(
+  //       msg: "Error: $e",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isLunchBreakLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> handleLunchBreakEnd() async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  // Future<void> handleLunchBreakEnd() async {
+  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
-    // Show confirmation dialog before proceeding
-    bool? confirmation = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
-                  : Color(0xFF1C1F26),
-          title: Text("End Lunch Break",
-              style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              )),
-          content: Text("Are you sure you want to end the lunch break?",
-              style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              )),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text("Cancel",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white,
-                  )),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text("Confirm",
-                  style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.blue
-                            : const Color(0xFF57C9E7),
-                  )),
-            ),
-          ],
-        );
-      },
-    );
+  //   // Show confirmation dialog before proceeding
+  //   bool? confirmation = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.white
+  //                 : Color(0xFF1C1F26),
+  //         title: Text("End Lunch Break",
+  //             style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white,
+  //             )),
+  //         content: Text("Are you sure you want to end the lunch break?",
+  //             style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white,
+  //             )),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //             child: Text("Cancel",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.black
+  //                           : Colors.white,
+  //                 )),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //             child: Text("Confirm",
+  //                 style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.blue
+  //                           : const Color(0xFF57C9E7),
+  //                 )),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    if (confirmation != true) return;
-    if (punchInId == null) {
-      Fluttertoast.showToast(
-        msg: "Punch In first to end lunch break!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
+  //   if (confirmation != true) return;
+  //   if (punchInId == null) {
+  //     Fluttertoast.showToast(
+  //       msg: "Punch In first to end lunch break!",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.orange,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     return;
+  //   }
 
-    setState(() {
-      isLunchBreakLoading = true;
-      isLunchBreakActive = false;
-    });
-    await _saveUserData();
-    String lunchEndTime = DateTime.now().toIso8601String();
-    String email = widget.email ?? "";
+  //   setState(() {
+  //     isLunchBreakLoading = true;
+  //     isLunchBreakActive = false;
+  //   });
+  //   await _saveUserData();
+  //   String lunchEndTime = DateTime.now().toIso8601String();
+  //   String email = widget.email ?? "";
 
-    Map<String, dynamic> payload = {
-      "endLunchTime": lunchEndTime,
-      "email": widget.email,
-      "id": punchInId,
-    };
+  //   Map<String, dynamic> payload = {
+  //     "endLunchTime": lunchEndTime,
+  //     "email": widget.email,
+  //     "id": punchInId,
+  //   };
 
-    print("email:$widget.email");
-    print("id:$widget.punchInId");
-    print("Payload: $payload");
+  //   print("email:$widget.email");
+  //   print("id:$widget.punchInId");
+  //   print("Payload: $payload");
 
-    try {
-      final response = await ApiService.endLunchBreak(
-          payload, widget.email!, punchInId!, lunchEndTime, context);
+  //   try {
+  //     final response = await ApiService.endLunchBreak(
+  //         payload, widget.email!, punchInId!, lunchEndTime, context);
 
-      if (response.statusCode == 200) {
-        // final responseData = json.decode(response.body);
-        // setState(() {
-        //   isLunchBreakActive = false;
-        // });
-        Fluttertoast.showToast(
-          msg: "Lunch Break Ended!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
-                  : Color(0xFF57C9E7),
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "Failed to end lunch break: ${response.body}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Error: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      setState(() {
-        isLunchBreakLoading = false;
-      });
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       // final responseData = json.decode(response.body);
+  //       // setState(() {
+  //       //   isLunchBreakActive = false;
+  //       // });
+  //       Fluttertoast.showToast(
+  //         msg: "Lunch Break Ended!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.indigo.shade900 // Default active color in light mode
+  //                 : Color(0xFF57C9E7),
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     } else {
+  //       Fluttertoast.showToast(
+  //         msg: "Failed to end lunch break: ${response.body}",
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Fluttertoast.showToast(
+  //       msg: "Error: $e",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isLunchBreakLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> endPunchOutTime() async {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  // Future<void> endPunchOutTime() async {
+  //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
 
-    // Show confirmation dialog before proceeding
-    bool? confirmation = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.white
-                  : Color(0xFF1C1F26),
-          title: Text(
-            "Punch Out",
-            style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white),
-          ),
-          content: Text(
-            "Are you sure you want to punchout?",
-            style: TextStyle(
-                color: themeProvider.themeData.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(
-                "Cancel",
-                style: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(
-                "Confirm",
-                style: TextStyle(
-                  color: themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.blue
-                      : const Color(0xFF57C9E7),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+  //   // Show confirmation dialog before proceeding
+  //   bool? confirmation = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.white
+  //                 : Color(0xFF1C1F26),
+  //         title: Text(
+  //           "Punch Out",
+  //           style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white),
+  //         ),
+  //         content: Text(
+  //           "Are you sure you want to punchout?",
+  //           style: TextStyle(
+  //               color: themeProvider.themeData.brightness == Brightness.light
+  //                   ? Colors.black
+  //                   : Colors.white),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(false),
+  //             child: Text(
+  //               "Cancel",
+  //               style: TextStyle(
+  //                   color:
+  //                       themeProvider.themeData.brightness == Brightness.light
+  //                           ? Colors.black
+  //                           : Colors.white),
+  //             ),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(true),
+  //             child: Text(
+  //               "Confirm",
+  //               style: TextStyle(
+  //                 color: themeProvider.themeData.brightness == Brightness.light
+  //                     ? Colors.blue
+  //                     : const Color(0xFF57C9E7),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    if (punchInId == null || widget.email == null || widget.name == null) {
-      Fluttertoast.showToast(
-        msg: "Punch In first to end punchout!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
+  //   if (punchInId == null || widget.email == null || widget.name == null) {
+  //     Fluttertoast.showToast(
+  //       msg: "Punch In first to end punchout!",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.orange,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     return;
+  //   }
 
-    if (!mounted) return; // Ensure the widget is still in the widget tree
-    setState(() {
-      isPunchOutLoading = true;
-      hasPunchedIn = false;
-    });
+  //   if (!mounted) return; // Ensure the widget is still in the widget tree
+  //   setState(() {
+  //     isPunchOutLoading = true;
+  //     hasPunchedIn = false;
+  //   });
 
-    await _saveUserData(); // Save user-specific data
+  //   await _saveUserData(); // Save user-specific data
 
-    String punchOutTime = DateTime.now().toIso8601String();
-    Map<String, dynamic> payload = {
-      "punchOutTime": punchOutTime,
-      "email": widget.email,
-      "id": punchInId,
-      "name": widget.name,
-    };
-    print("PunchIn Payload: $payload");
+  //   String punchOutTime = DateTime.now().toIso8601String();
+  //   Map<String, dynamic> payload = {
+  //     "punchOutTime": punchOutTime,
+  //     "email": widget.email,
+  //     "id": punchInId,
+  //     "name": widget.name,
+  //   };
+  //   print("PunchIn Payload: $payload");
 
-    try {
-      final response = await ApiService.punchOut(payload, widget.email!,
-          punchInId!, widget.name!, punchOutTime, context);
+  //   try {
+  //     final response = await ApiService.punchOut(payload, widget.email!,
+  //         punchInId!, widget.name!, punchOutTime, context);
 
-      if (response.statusCode == 200) {
-        if (!mounted) return; // Ensure the widget is still in the widget tree
-        setState(() {
-          isPunchOutActive = false;
-        });
-        Fluttertoast.showToast(
-          msg: "Punch Out Successful!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor:
-              themeProvider.themeData.brightness == Brightness.light
-                  ? Colors.indigo.shade900 // Default active color in light mode
-                  : Color(0xFF57C9E7),
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "Failed punch out: ${response.body}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      }
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Error: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      if (!mounted) return; // Ensure the widget is still in the widget tree
-      setState(() {
-        isPunchOutLoading = false;
-      });
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       if (!mounted) return; // Ensure the widget is still in the widget tree
+  //       setState(() {
+  //         isPunchOutActive = false;
+  //       });
+  //       Fluttertoast.showToast(
+  //         msg: "Punch Out Successful!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor:
+  //             themeProvider.themeData.brightness == Brightness.light
+  //                 ? Colors.indigo.shade900 // Default active color in light mode
+  //                 : Color(0xFF57C9E7),
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     } else {
+  //       Fluttertoast.showToast(
+  //         msg: "Failed punch out: ${response.body}",
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     Fluttertoast.showToast(
+  //       msg: "Error: $e",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     if (!mounted) return; // Ensure the widget is still in the widget tree
+  //     setState(() {
+  //       isPunchOutLoading = false;
+  //     });
+  //   }
+  // }
 
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -1311,115 +1306,115 @@ class _DashboardState extends State<Dashboard> {
                         //   ],
                         // ),
 
-                        const SizedBox(height: 10.0),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: themeProvider.themeData.brightness ==
-                                    Brightness.light
-                                ? Colors.white
-                                : Color.fromARGB(255, 24, 28, 37),
-                            //  border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(8.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: themeProvider.themeData.brightness ==
-                                        Brightness.light
-                                    ? Colors.grey.withOpacity(0.5)
-                                    : Colors.black.withOpacity(0.3),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      widget.name ?? "User Name",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.black
-                                            : Color(0xFF57C9E7),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //       builder: (context) =>
-                                        //           CalendarHolidayScreen()),
-                                        // );
-                                      },
-                                      child: Container(
-                                        height: 30,
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                          color: themeProvider
-                                                      .themeData.brightness ==
-                                                  Brightness.light
-                                              ? Colors.red
-                                              : Colors.red[400],
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: themeProvider.themeData
-                                                          .brightness ==
-                                                      Brightness.light
-                                                  ? Colors.grey.withOpacity(0.5)
-                                                  : Colors.black
-                                                      .withOpacity(0.3),
-                                              spreadRadius: 2,
-                                              blurRadius: 5,
-                                              offset: const Offset(0, 3),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Late",
-                                            style: TextStyle(
-                                              color: themeProvider.themeData
-                                                          .brightness ==
-                                                      Brightness.light
-                                                  ? Colors.white
-                                                  : Colors
-                                                      .white, // Text color remains white for both themes
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                if (lateMessage != null)
-                                  Text(
-                                    lateMessage!,
-                                    style: TextStyle(
-                                        color: themeProvider
-                                                    .themeData.brightness ==
-                                                Brightness.light
-                                            ? Colors.red
-                                            : Colors.red[400],
-                                        fontSize: 17),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // const SizedBox(height: 10.0),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     color: themeProvider.themeData.brightness ==
+                        //             Brightness.light
+                        //         ? Colors.white
+                        //         : Color.fromARGB(255, 24, 28, 37),
+                        //     //  border: Border.all(color: Colors.black),
+                        //     borderRadius: BorderRadius.circular(8.0),
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: themeProvider.themeData.brightness ==
+                        //                 Brightness.light
+                        //             ? Colors.grey.withOpacity(0.5)
+                        //             : Colors.black.withOpacity(0.3),
+                        //         spreadRadius: 2,
+                        //         blurRadius: 5,
+                        //         offset: const Offset(0, 3),
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(16.0),
+                        //     child: Column(
+                        //       children: [
+                        //         Row(
+                        //           mainAxisAlignment:
+                        //               MainAxisAlignment.spaceBetween,
+                        //           children: [
+                        //             Text(
+                        //               widget.name ?? "User Name",
+                        //               style: TextStyle(
+                        //                 fontWeight: FontWeight.bold,
+                        //                 color: themeProvider
+                        //                             .themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.black
+                        //                     : Color(0xFF57C9E7),
+                        //               ),
+                        //             ),
+                        //             GestureDetector(
+                        //               onTap: () {
+                        //                 // Navigator.push(
+                        //                 //   context,
+                        //                 //   MaterialPageRoute(
+                        //                 //       builder: (context) =>
+                        //                 //           CalendarHolidayScreen()),
+                        //                 // );
+                        //               },
+                        //               child: Container(
+                        //                 height: 30,
+                        //                 width: 50,
+                        //                 decoration: BoxDecoration(
+                        //                   color: themeProvider
+                        //                               .themeData.brightness ==
+                        //                           Brightness.light
+                        //                       ? Colors.red
+                        //                       : Colors.red[400],
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(8.0),
+                        //                   boxShadow: [
+                        //                     BoxShadow(
+                        //                       color: themeProvider.themeData
+                        //                                   .brightness ==
+                        //                               Brightness.light
+                        //                           ? Colors.grey.withOpacity(0.5)
+                        //                           : Colors.black
+                        //                               .withOpacity(0.3),
+                        //                       spreadRadius: 2,
+                        //                       blurRadius: 5,
+                        //                       offset: const Offset(0, 3),
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //                 child: Center(
+                        //                   child: Text(
+                        //                     "Late",
+                        //                     style: TextStyle(
+                        //                       color: themeProvider.themeData
+                        //                                   .brightness ==
+                        //                               Brightness.light
+                        //                           ? Colors.white
+                        //                           : Colors
+                        //                               .white, // Text color remains white for both themes
+                        //                     ),
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //         SizedBox(
+                        //           height: 8,
+                        //         ),
+                        //         if (lateMessage != null)
+                        //           Text(
+                        //             lateMessage!,
+                        //             style: TextStyle(
+                        //                 color: themeProvider
+                        //                             .themeData.brightness ==
+                        //                         Brightness.light
+                        //                     ? Colors.red
+                        //                     : Colors.red[400],
+                        //                 fontSize: 17),
+                        //           ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(height: 20.0),
                         // Time Log Container
                         Container(

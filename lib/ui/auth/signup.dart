@@ -118,6 +118,7 @@ class _SignupState extends State<Signup> {
   }
 
   Future<void> _selectDOB() async {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime(2000),
@@ -125,15 +126,30 @@ class _SignupState extends State<Signup> {
       lastDate: DateTime.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
-              primary: Color(0xFF57C9E7), // Header background color
-              onPrimary: Colors.white, // Header text color
-              surface: Colors.grey[850]!, // Dialog background color
-              onSurface: Colors.white, // Text color
-            ),
+          data: themeProvider.themeData.copyWith(
             dialogBackgroundColor:
-                Colors.grey[900], // Background color for the dialog
+                themeProvider.themeData.brightness == Brightness.dark
+                    ? Colors.grey.shade900
+                    : Colors.white,
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    themeProvider.themeData.brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.indigo.shade900,
+              ),
+            ),
+            colorScheme: themeProvider.themeData.colorScheme.copyWith(
+              primary: themeProvider.themeData.brightness == Brightness.dark
+                  ? Color(0xFF57C9E7)
+                  : Colors.indigo.shade900,
+              surface: themeProvider.themeData.brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              onSurface: themeProvider.themeData.brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
           ),
           child: child!,
         );
@@ -153,7 +169,7 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context,listen:false);
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.themeData.brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
     final fieldColor = isDark ? Color(0xFF1C1F26) : Colors.white;

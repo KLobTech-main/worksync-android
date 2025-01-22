@@ -36,18 +36,6 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-// // Logout function
-// Future<void> _logout(BuildContext context) async {
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   await prefs.setBool('isLoggedIn', false); // Set login status to false
-//   Navigator.pushReplacement(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => LogIn(), // Navigate to login screen
-//     ),
-//   );
-// }
-
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
   final String compEmail = "info@klobtech.com";
@@ -194,17 +182,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData =
-        prefs.getString(widget.email!); // Retrieve user data by email key
+    String? userData = prefs.getString(widget.email!);
     if (userData != null) {
-      Map<String, dynamic> data =
-          jsonDecode(userData); // Decode the JSON string
+      Map<String, dynamic> data = jsonDecode(userData);
       setState(() {
         hasPunchedIn = data['hasPunchedIn'] ?? false;
-
         punchInTime = data['punchInTime'];
         punchInId = data['punchInId'];
         lateMessage = data['lateMessage'];
+      });
+    } else {
+      setState(() {
+        hasPunchedIn = false;
       });
     }
   }
@@ -298,11 +287,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Prepare API payload
     String punchInTime = DateTime.now().toIso8601String();
-    String email = widget.email ?? ""; // Ensure email is not null
+    String email = widget.email ?? "";
 
     Map<String, dynamic> payload = {
       "punchInTime": punchInTime,
-      "email": email, // Add email to the payload as required by the API
+      "email": email,
     };
 
     print("PunchIn Payload: $payload");
@@ -319,6 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
           isPunchInLoading = false;
           this.punchInTime = punchInTime;
           punchInId = responseData['id'];
+          hasPunchedIn = true;
 
           // Store punch-in status with the current date
           prefs.setString(
@@ -379,7 +369,6 @@ class _HomeScreenState extends State<HomeScreen> {
         fontSize: 16.0,
       );
     } finally {
-      // Hide loading indicator
       setState(() {
         isPunchInLoading = false;
       });
@@ -983,9 +972,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 3,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                crossAxisSpacing: 30,
-                mainAxisSpacing: 30,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
                 children: [
                   _buildGridOption(Icons.timelapse, "TimeLog", onTap: () {
                     Navigator.push(
@@ -1118,28 +1107,24 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: Container(
-        width: 70.0, // Increase width to make it bigger
-        height: 70.0, // Increase height to make it bigger
+        width: 70.0,
+        height: 70.0,
         child: FloatingActionButton(
           onPressed: () async {
             if (!hasPunchedIn) {
-              // Handle Punch In if not already punched in
               await handlePunchIn();
             } else {
-              // Handle Punch Out if already punched in
               await PunchOutTime();
             }
           },
-          backgroundColor: hasPunchedIn
-              ? Colors.red.shade800
-              : Colors.green.shade800, // Change color based on punch-in status
+          backgroundColor:
+              hasPunchedIn ? Colors.red.shade800 : Colors.green.shade800,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                35), // Adjust borderRadius for a bigger circle
+            borderRadius: BorderRadius.circular(35),
           ),
           child: Icon(
             hasPunchedIn ? Icons.exit_to_app : Icons.fingerprint,
-            color: Colors.white, // Change icon based on punch-in status
+            color: Colors.white,
           ),
         ),
       ),
@@ -1150,9 +1135,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGridOption(IconData icon, String title, {VoidCallback? onTap}) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
-      onTap: onTap, // Trigger the navigation function
+      onTap: onTap,
       child: Container(
-        height: 70,
+        height: 80,
         width: 200,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -1186,7 +1171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color:
                         themeProvider.themeData.brightness == Brightness.light
                             ? Colors.indigo.shade900
-                            : Colors.grey)),
+                            : Colors.white)),
           ],
         ),
       ),

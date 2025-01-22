@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dass/colortheme/theme_maneger.dart';
 import 'package:dass/modal/leavesummarymodel.dart';
 import 'package:dass/modal/timelogmodelnew.dart';
 import 'package:dass/screens/attendance_details_model.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../modal/alluser.dart';
@@ -235,7 +237,6 @@ class ApiService {
     }
   }
 
-
   /// PATCH: Update Task Status
   static Future<void> updateTaskStatus(
       String taskId, String status, String email) async {
@@ -396,8 +397,7 @@ class ApiService {
       if (response.statusCode == 200) {
         // Parse the JSON response into a list
         return jsonDecode(response.body) as List<dynamic>;
-      }
-      else {
+      } else {
         throw Exception("Failed to fetch tasks: ${response.statusCode}");
       }
     } catch (e) {
@@ -426,14 +426,13 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as List<dynamic>;
-      }
-      else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401) {
         print("Invalid token: Authorization failed");
         throw Exception("Invalid token: Please log in again.");
       } else if (response.statusCode == 404) {
         print("No tickets found for the user: $email");
-        return [];}
-      else {
+        return [];
+      } else {
         throw Exception("Failed to fetch users: ${response.statusCode}");
       }
     } catch (e) {
@@ -525,7 +524,7 @@ class ApiService {
 
   static Future<void> createTask(
     BuildContext context, {
-      required String? name,
+    required String? name,
     required String? assignedBy,
     required String assignedTo,
     required String title,
@@ -551,7 +550,7 @@ class ApiService {
           "Authorization": _authToken!,
         },
         body: jsonEncode({
-          "name" : name,
+          "name": name,
           "assignedBy": assignedBy,
           "assignedTo": assignedTo,
           "title": title,
@@ -592,13 +591,11 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> responseBody = jsonDecode(response.body);
         return responseBody.map((json) => MeetingModal.fromJson(json)).toList();
-      }
-      else if (response.statusCode == 404) {
+      } else if (response.statusCode == 404) {
         // Handle 404: No meetings scheduled
         print("No meetings scheduled for the participant: $participantEmail");
         return []; // Return an empty list
-      }
-      else {
+      } else {
         throw Exception("Failed to fetch meetings: ${response.statusCode}");
       }
     } catch (e) {
@@ -991,13 +988,11 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => PaySlipModel.fromJson(json)).toList();
-      }
-      else if (response.statusCode == 204) {
+      } else if (response.statusCode == 204) {
         // Handle the 204 No Content response
         print('No payslips found. Status code: 204');
         return []; // Return an empty list if no content
-      }
-      else {
+      } else {
         print('Error: ${response.statusCode}');
         print('Error Message: ${response.body}');
         throw Exception('Failed to load payslips');
@@ -1572,8 +1567,8 @@ class ApiService {
 
   static Future<List<Map<String, dynamic>>> getLeaveStatus(
       String email, String date, BuildContext context) async {
-    final String url =
-        "$_baseUrl/leaves/$email?email=$email"; // Ensure this URL is correct
+    final String url = "$_baseUrl/leaves/$email?email=$email";
+
     try {
       final response = await ApiService.makeRequest(
         context: context,
@@ -1585,17 +1580,29 @@ class ApiService {
         },
       );
 
-      // Print response details
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
 
-      // Print the equivalent curl command
       _printCurlCommand(url);
 
       if (response.statusCode == 200) {
-        // Parse and return the data
         final List<dynamic> data = jsonDecode(response.body);
         return data.map((e) => Map<String, dynamic>.from(e)).toList();
+      } else if (response.statusCode == 404) {
+        final responseBody = jsonDecode(response.body);
+        final message = responseBody['message'] ?? "No leave requests found.";
+        print("404 Not Found: $message");
+
+        Fluttertoast.showToast(
+          msg: "No leave requests found for the email: $email",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        return [];
       } else {
         print("Failed to fetch data. Status code: ${response.statusCode}");
         return [];
@@ -1634,6 +1641,17 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
+      } else if (response.statusCode == 404) {
+        print("404 Not Found: No leave requests found for the given email.");
+        Fluttertoast.showToast(
+          msg: "No leave requests found for the email: $email",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return null;
       } else {
         debugPrint('Error: ${response.statusCode}');
         return null;
@@ -1911,15 +1929,13 @@ curl -X PATCH $url \\
       if (response.statusCode == 200) {
         print("Meeting details updated successfully.");
         return response; // return the response here
-      }
-      else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401) {
         print("Invalid token: Authorization failed");
         throw Exception("Invalid token: Please log in again.");
       } else if (response.statusCode == 404) {
         print("Meeting Not Found");
         return response;
-      }
-      else {
+      } else {
         throw Exception(
             "Failed to update meeting details: ${response.statusCode}");
       }
@@ -2076,9 +2092,9 @@ curl -X PATCH $url \\
         List<dynamic> data = json.decode(response.body);
         return data
             .map((user) => {
-          'name': user['name']?.toString() ?? '',
-          'email': user['email']?.toString() ?? '',
-        })
+                  'name': user['name']?.toString() ?? '',
+                  'email': user['email']?.toString() ?? '',
+                })
             .toList();
       } else {
         throw Exception('Failed to fetch users');
@@ -2146,6 +2162,17 @@ curl -X PATCH $url \\
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         return LeaveSummaryModel.fromJson(jsonData);
+      } else if (response.statusCode == 404) {
+        print("404 Not Found: No leave requests found for the given email.");
+        Fluttertoast.showToast(
+          msg: "No leave requests found for the email: $email",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return null;
       } else {
         print(
             "Failed to fetch user. Status: ${response.statusCode}\nResponse: ${response.body}");
@@ -2227,13 +2254,26 @@ curl -X PATCH $url \\
 
   // Function to handle token expiration
   static void _handleTokenExpired(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent user from dismissing the dialog
       builder: (context) {
         return AlertDialog(
-          title: const Text('Session Expired'),
-          content: const Text('Your session has expired. Please log in again.'),
+          title: Text('Session Expired'),
+          titleTextStyle: TextStyle(
+            color: themeProvider.themeData.brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
+            fontSize: 24,
+          ),
+          content: Text(
+            'Your session has expired. Please log in again.',
+            style: TextStyle(
+                color: themeProvider.themeData.brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white),
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -2243,7 +2283,14 @@ curl -X PATCH $url \\
                   (route) => false,
                 );
               },
-              child: const Text('Log Out'),
+              child: Text(
+                'Log Out',
+                style: TextStyle(
+                  color: themeProvider.themeData.brightness == Brightness.light
+                      ? Colors.indigo.shade900
+                      : const Color(0xFF57C9E7),
+                ),
+              ),
             ),
           ],
         );
