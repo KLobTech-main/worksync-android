@@ -18,6 +18,7 @@ import 'package:dass/ui/meeting/meetingscreen.dart';
 import 'package:dass/ui/taskandlogs/taskoverview.dart';
 import 'package:dass/ui/ticketing/myticket.dart';
 import 'package:dass/ui/timelogs/timelogscreen.dart';
+import 'package:dass/ui/todolist/todolist.dart';
 import 'package:dass/webservices/api.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -987,11 +988,11 @@ class _HomeScreenState extends State<HomeScreen> {
             //   height: 10,
             // ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 10),
             // Grid View Section
             Expanded(
               child: GridView.count(
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
@@ -1088,7 +1089,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               )),
                     );
                   }),
-                  _buildGridOption(Icons.list, "ToDo List", onTap: () {}),
+                  _buildGridOption(Icons.list, "ToDo List", onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TodoScreen(
+                                name: widget.name,
+                                email: widget.email,
+                              )),
+                    );
+                  }),
                   _buildGridOption(
                       Icons.admin_panel_settings_outlined, "project panel",
                       onTap: () {
