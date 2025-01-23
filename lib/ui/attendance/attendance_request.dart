@@ -308,7 +308,9 @@ class _AttendanceRequestState extends State<AttendanceRequest> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Punch In: ${record['punchInTime']}',
+                                          // 'Punch In: ${record['punchInTime']}',
+                                          'Punch In: ${_formatDateTime(record['punchInTime'])}',
+
                                           style: TextStyle(
                                             color: themeProvider
                                                         .themeData.brightness ==
@@ -321,7 +323,9 @@ class _AttendanceRequestState extends State<AttendanceRequest> {
                                           height: 5,
                                         ),
                                         Text(
-                                          'Punch Out: ${record['punchOutTime']}',
+                                          // 'Punch Out: ${record['punchOutTime']}',
+                                          'Punch Out: ${_formatDateTime(record['punchOutTime'])}',
+
                                           style: TextStyle(
                                             color: themeProvider
                                                         .themeData.brightness ==
@@ -443,5 +447,22 @@ class _AttendanceRequestState extends State<AttendanceRequest> {
         ],
       ),
     );
+  }
+}
+
+String _formatDateTime(String? isoDate) {
+  if (isoDate == null || isoDate.isEmpty) {
+    return "No Date Available";
+  }
+
+  try {
+    // Parse the ISO string to DateTime
+    DateTime dateTime = DateTime.parse(isoDate);
+
+    // Format the date and time using intl
+    String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+    return formattedDate;
+  } catch (e) {
+    return "Invalid Date Format";
   }
 }

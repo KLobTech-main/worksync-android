@@ -230,7 +230,9 @@ class _AttendanceDetailsScreenState extends State<AttendanceDetailsScreen> {
                           ),
                         ),
                         Text(
-                          "Punch In Time: ${attendanceData?["attendance"]?["punchInTime"] ?? 'N/A'}",
+                          //   "Punch In Time: ${attendanceData?["attendance"]?["punchInTime"] ?? 'N/A'}",
+                          "Punch In Time: ${_formatDateTime(attendanceData?["attendance"]?["punchInTime"] ?? '') ?? 'N/A'}",
+
                           style: TextStyle(
                             color: themeProvider.themeData.brightness ==
                                     Brightness.light
@@ -239,7 +241,8 @@ class _AttendanceDetailsScreenState extends State<AttendanceDetailsScreen> {
                           ),
                         ),
                         Text(
-                          "Punch Out Time: ${attendanceData?["attendance"]?["punchOutTime"] ?? 'N/A'}",
+                          //"Punch Out Time: ${attendanceData?["attendance"]?["punchOutTime"] ?? 'N/A'}",
+                          "Punch Out Time: ${_formatDateTime(attendanceData?["attendance"]?["punchOutTime"] ?? '') ?? 'N/A'}",
                           style: TextStyle(
                             color: themeProvider.themeData.brightness ==
                                     Brightness.light
@@ -267,5 +270,22 @@ class _AttendanceDetailsScreenState extends State<AttendanceDetailsScreen> {
         ),
       ),
     );
+  }
+}
+
+String _formatDateTime(String? isoDate) {
+  if (isoDate == null || isoDate.isEmpty) {
+    return "No Date Available";
+  }
+
+  try {
+    // Parse the ISO string to DateTime
+    DateTime dateTime = DateTime.parse(isoDate);
+
+    // Format the date and time using intl
+    String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+    return formattedDate;
+  } catch (e) {
+    return "Invalid Date Format";
   }
 }

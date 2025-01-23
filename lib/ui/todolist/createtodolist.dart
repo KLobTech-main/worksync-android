@@ -12,7 +12,7 @@ class CreateTodoList extends StatefulWidget {
 class _CreateTodoListState extends State<CreateTodoList> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController addDiscriptionController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
+  TextEditingController priorityController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController importentController = TextEditingController();
@@ -38,246 +38,302 @@ class _CreateTodoListState extends State<CreateTodoList> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
-                : null, // You can use null for no gradient in dark mode
+                : null,
             color: themeProvider.themeData.brightness == Brightness.dark
                 ? Color.fromARGB(255, 24, 28, 37)
-                : null, // This is used when brightness is dark for a solid color
+                : null,
           ),
         ),
         iconTheme: IconThemeData(
           color: themeProvider.themeData.brightness == Brightness.light
               ? Colors.white
               : Color(0xFF57C9E7),
-        ), // Adjust icon color for dark theme
-
+        ),
         elevation: 0,
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 30,
-              ),
-              TextField(
-                style: TextStyle(
-                  color: themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white,
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 30,
                 ),
-                controller: addDiscriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Add a discreptions...',
-                  labelStyle: TextStyle(
+                TextField(
+                  style: TextStyle(
                     color:
                         themeProvider.themeData.brightness == Brightness.light
                             ? Colors.black
                             : Colors.white,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black.withOpacity(0.3)
-                              : Colors.white.withOpacity(0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
+                  controller: addDiscriptionController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    labelText: 'Add a description...',
+                    labelStyle: TextStyle(
                       color:
                           themeProvider.themeData.brightness == Brightness.light
                               ? Colors.black
-                              : Colors.grey,
-                      width: 2,
+                              : Colors.white,
                     ),
-                  ), // Added
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.grey,
+                        width: 1,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextField(
-                style: TextStyle(
-                  color: themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white,
+                SizedBox(
+                  height: 20,
                 ),
-                controller: categoryController,
-                decoration: InputDecoration(
-                  labelText: 'Category',
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                  labelStyle: TextStyle(
+                DropdownButtonFormField<String>(
+                  value: priorityController.text.isNotEmpty
+                      ? priorityController.text
+                      : null,
+                  items: ['Low', 'Medium', 'High'].map((String priority) {
+                    return DropdownMenuItem<String>(
+                      value: priority,
+                      child: Text(priority),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      priorityController.text = newValue;
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Priority',
+                    labelStyle: TextStyle(
+                      color:
+                          themeProvider.themeData.brightness == Brightness.light
+                              ? Colors.black
+                              : Colors.white,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.grey,
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  style: TextStyle(
                     color:
                         themeProvider.themeData.brightness == Brightness.light
                             ? Colors.black
                             : Colors.white,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black.withOpacity(0.3)
-                              : Colors.white.withOpacity(0.3),
+                  dropdownColor:
+                      themeProvider.themeData.brightness == Brightness.light
+                          ? Colors.white
+                          : Colors.grey[800], // Matches theme
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (pickedDate != null) {
+                      dateController.text =
+                          "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextField(
+                      style: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      controller: dateController,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.calendar_month),
+                        labelText: 'Date',
+                        labelStyle: TextStyle(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: themeProvider.themeData.brightness ==
+                                    Brightness.light
+                                ? Colors.black.withOpacity(0.3)
+                                : Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: themeProvider.themeData.brightness ==
+                                    Brightness.light
+                                ? Colors.black
+                                : Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(), // Default time
+                    );
+                    if (pickedTime != null) {
+                      // Format the selected time and set it to the controller
+                      final hour = pickedTime.hour.toString().padLeft(2, '0');
+                      final minute =
+                          pickedTime.minute.toString().padLeft(2, '0');
+                      timeController.text = "$hour:$minute";
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextField(
+                      style: TextStyle(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      controller: timeController,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.timer),
+                        labelText: 'Time',
+                        labelStyle: TextStyle(
+                          color: themeProvider.themeData.brightness ==
+                                  Brightness.light
                               ? Colors.black
-                              : Colors.grey,
-                      width: 2,
+                              : Colors.white,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: themeProvider.themeData.brightness ==
+                                    Brightness.light
+                                ? Colors.black.withOpacity(0.3)
+                                : Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: themeProvider.themeData.brightness ==
+                                    Brightness.light
+                                ? Colors.black
+                                : Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                      ),
                     ),
-                  ), // Added
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextField(
-                style: TextStyle(
-                  color: themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white,
+                SizedBox(
+                  height: 20,
                 ),
-                controller: dateController,
-                decoration: InputDecoration(
-                  suffixIcon: Icon(Icons.calendar_month),
-                  labelText: 'Date',
-                  labelStyle: TextStyle(
+                TextField(
+                  style: TextStyle(
                     color:
                         themeProvider.themeData.brightness == Brightness.light
                             ? Colors.black
                             : Colors.white,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black.withOpacity(0.3)
-                              : Colors.white.withOpacity(0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
+                  controller: importentController,
+                  decoration: InputDecoration(
+                    labelText: 'Importent',
+                    suffixIcon: Icon(Icons.add_box),
+                    labelStyle: TextStyle(
                       color:
                           themeProvider.themeData.brightness == Brightness.light
                               ? Colors.black
-                              : Colors.grey,
-                      width: 2,
+                              : Colors.white,
                     ),
-                  ), // Added
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextField(
-                style: TextStyle(
-                  color: themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white,
-                ),
-                controller: timeController,
-                decoration: InputDecoration(
-                  suffixIcon: Icon(Icons.timer_off),
-                  labelText: 'Time',
-                  labelStyle: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: themeProvider.themeData.brightness ==
+                                Brightness.light
                             ? Colors.black
-                            : Colors.white,
+                            : Colors.grey,
+                        width: 1,
+                      ),
+                    ), // Added
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black.withOpacity(0.3)
-                              : Colors.white.withOpacity(0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black
-                              : Colors.grey,
-                      width: 2,
-                    ),
-                  ), // Added
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextField(
-                style: TextStyle(
-                  color: themeProvider.themeData.brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white,
-                ),
-                controller: importentController,
-                decoration: InputDecoration(
-                  labelText: 'Importent',
-                  suffixIcon: Icon(Icons.add_box),
-                  labelStyle: TextStyle(
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black.withOpacity(0.3)
-                              : Colors.white.withOpacity(0.3),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.black
-                              : Colors.grey,
-                      width: 2,
-                    ),
-                  ), // Added
-                ),
-              ),
-              SizedBox(height: 50),
-              SizedBox(
-                height: 50,
-                width: 120,
-                child: GestureDetector(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.indigo.shade900
-                              : Color(0xFF57C9E7),
-                    ),
-                    child: Text(
-                      "Done",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                SizedBox(height: 50),
+                SizedBox(
+                  height: 50,
+                  width: 120,
+                  child: GestureDetector(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeProvider.themeData.brightness ==
+                                Brightness.light
+                            ? Colors.indigo.shade900
+                            : Color(0xFF57C9E7),
+                      ),
+                      child: Text(
+                        "Done",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

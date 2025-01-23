@@ -187,12 +187,12 @@ class _DailyLogScreenState extends State<DailyLogScreen> {
                             SizedBox(height: 25),
                             _buildRow(
                               "Punched In:",
-                              attendance?.punchInTime ?? "N/A",
+                              _formatDateTime(attendance?.punchInTime),
                               theme,
                             ),
                             _buildRow(
                               "Punched Out:",
-                              attendance?.punchOutTime ?? "N/A",
+                              _formatDateTime(attendance?.punchOutTime),
                               theme,
                             ),
                             _buildRow(
@@ -247,5 +247,22 @@ class _DailyLogScreenState extends State<DailyLogScreen> {
         ],
       ),
     );
+  }
+}
+
+String _formatDateTime(String? isoDate) {
+  if (isoDate == null || isoDate.isEmpty) {
+    return "No Date Available";
+  }
+
+  try {
+    // Parse the ISO string to DateTime
+    DateTime dateTime = DateTime.parse(isoDate);
+
+    // Format the date and time using intl
+    String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+    return formattedDate;
+  } catch (e) {
+    return "Invalid Date Format";
   }
 }
