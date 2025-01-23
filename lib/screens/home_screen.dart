@@ -25,6 +25,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../ui/projectpanel/projectpanel.dart';
+
 class HomeScreen extends StatefulWidget {
   final String? name;
   final String? email;
@@ -1089,7 +1091,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildGridOption(Icons.list, "ToDo List", onTap: () {}),
                   _buildGridOption(
                       Icons.admin_panel_settings_outlined, "project panel",
-                      onTap: () {}),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProjectPanelPage()));
+                      }),
                   _buildGridOption(Icons.holiday_village, "Holiday", onTap: () {
                     Navigator.push(
                       context,
