@@ -2296,4 +2296,57 @@ curl -X PATCH $url \\
       },
     );
   }
+  static Future<bool> deleteLeaveRequest(
+      BuildContext context, String id, String userEmail, String reason) async {
+    final String url =
+        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/leaves/request';
+
+    try {
+      // Make the API call using your ApiService
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+        body: jsonEncode({
+          "id": id,
+          "userEmail": userEmail,
+          "reasonForCancellation": reason,
+        }),
+      );
+
+      // Print the cURL equivalent for debugging
+      print('''
+cURL Command:
+curl -X POST $url \
+-H "Content-Type: application/json" \
+-H "Authorization: $_authToken" \
+-d '${jsonEncode({
+        "id": id,
+        "userEmail": userEmail,
+        "reasonForCancellation": reason,
+      })}'
+''');
+
+      // Print the HTTP response status code and body
+      print("Response Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        print("Leave Cancel request Send successfully.");
+        return true;
+      } else {
+        print("Failed to delete leave request. Status: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      // Print the error for debugging
+      print("Error deleting leave request: $e");
+      return false;
+    }
+  }
+
 }

@@ -193,6 +193,7 @@ class _MeetingListScreenState extends State<MeetingListScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => MeetingDetailsScreen(
+                    email:widget.email,
                     meeting: meeting,
                     onMeetingUpdated: () {
                       setState(() {

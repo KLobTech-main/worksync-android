@@ -1,6 +1,7 @@
 import 'package:dass/colortheme/theme_maneger.dart';
 import 'package:dass/webservices/api.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class LeaveManagementScreen extends StatefulWidget {
@@ -123,6 +124,83 @@ class _LeaveManagementScreenState extends State<LeaveManagementScreen>
   bool isSameYear(DateTime currentDate, DateTime compareDate) {
     return currentDate.year == compareDate.year;
   }
+
+  void showDeleteDialog(BuildContext context, String id, String userEmail) {
+    final TextEditingController reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Leave Request"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Please provide a reason for deleting the leave request."),
+              SizedBox(height: 10),
+              TextField(
+                controller: reasonController,
+                decoration: InputDecoration(
+                  labelText: "Reason",
+                  border: OutlineInputBorder(),
+                ),
+                maxLength: 200,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final reason = reasonController.text.trim();
+
+                if (reason.isNotEmpty) {
+                  // Call the delete API
+                  final success = await ApiService.deleteLeaveRequest(
+                      context, id, userEmail, reason);
+
+                  Navigator.pop(context); // Close the dialog
+
+                  // Show a toast message
+                  Fluttertoast.showToast(
+                    msg: success
+                        ? "Leave cancel request send successfully."
+                        : "Failed to delete leave request.",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: success ? Colors.green : Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+
+                  if (success) {
+                    // Refresh the leave list after deletion
+                    fetchLeaveData();
+                  }
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "Reason cannot be empty.",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.orange,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                }
+              },
+              child: Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -320,15 +398,27 @@ class _LeaveManagementScreenState extends State<LeaveManagementScreen>
                   ),
                 ),
                 SizedBox(height: 8),
-                Text(
-                  'Status: ${leave['status'] ?? 'N/A'}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color:
-                        themeProvider.themeData.brightness == Brightness.light
-                            ? Colors.grey[800]
-                            : Colors.white,
-                  ),
+                Row(
+                  mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Status: ${leave['status'] ?? 'N/A'}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color:
+                            themeProvider.themeData.brightness == Brightness.light
+                                ? Colors.grey[800]
+                                : Colors.white,
+                      ),
+                    ),
+                    if (leave['status']?.toLowerCase() == 'pending') // Check for status
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red.shade900),
+                        onPressed: () {
+                          showDeleteDialog(context, leave['id'], widget.email!);
+                        },
+                      ),
+                  ],
                 ),
               ],
             ),
