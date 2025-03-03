@@ -8,10 +8,11 @@ import 'package:provider/provider.dart';
 import '../../modal/meetingsmodel.dart';
 
 class MeetingDetailsScreen extends StatefulWidget {
+  String? email;
   final MeetingModal meeting;
   final VoidCallback? onMeetingUpdated;
 
-  MeetingDetailsScreen({required this.meeting, this.onMeetingUpdated});
+  MeetingDetailsScreen({required this.meeting, this.onMeetingUpdated,this.email});
 
   @override
   State<MeetingDetailsScreen> createState() => _MeetingDetailsScreenState();
@@ -276,17 +277,20 @@ class _MeetingDetailsScreenState extends State<MeetingDetailsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _rescheduleMeeting(context),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          themeProvider.themeData.brightness == Brightness.light
-                              ? Colors.indigo.shade900
-                              : Color(0xFF57C9E7),
+                    if (widget.meeting.participants != null &&
+                        widget.meeting.participants!.isNotEmpty &&
+                        widget.meeting.participants!.first == widget.email!)
+                      ElevatedButton(
+                        onPressed: () => _rescheduleMeeting(context),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            themeProvider.themeData.brightness == Brightness.light
+                                ? Colors.indigo.shade900
+                                : Color(0xFF57C9E7),
+                          ),
                         ),
+                        child: Text('Reschedule'),
                       ),
-                      child: Text('Reschedule'),
-                    ),
 
                     // ElevatedButton(
                     //   onPressed: () => _updateMeetingStatus(context, 'Open'),

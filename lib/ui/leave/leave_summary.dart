@@ -7,6 +7,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../holiday/holiday.dart';
+
 class LeaveGridScreen extends StatefulWidget {
   final String? email;
   final String? name;
@@ -72,6 +74,12 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
                 )),
       );
     }
+    else if (index == 2) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context)=>CalendarHolidayScreen())
+      );
+    }
   }
 
   @override
@@ -126,6 +134,10 @@ class _LeaveGridScreenState extends State<LeaveGridScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.pending_actions),
             label: "Leave Status",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.holiday_village),
+            label: "Holidays",
           ),
         ],
       ),
