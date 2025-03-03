@@ -27,7 +27,7 @@ import '../modal/payslipmodel.dart';
 
 class ApiService {
   static const String _baseUrl =
-      "https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api";
+      "https://work-management-cvdpavakcsa5brfb.canadacentral-01.azurewebsites.net/api";
   static String? _authToken;
 
   ///Login api
@@ -116,7 +116,7 @@ class ApiService {
   static Future<http.Response> registerUser(
       Map<String, dynamic> userData) async {
     final url = Uri.parse(
-        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/users/register');
+        '$_baseUrl/users/register');
     final headers = {"Content-Type": "application/json"};
     final body = json.encode(userData);
 
@@ -268,7 +268,7 @@ class ApiService {
   Future<http.Response> createMeeting(String email, BuildContext context,
       Map<String, dynamic> meetingDetails) async {
     final url = Uri.parse(
-        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/meetings?email=$email');
+        '$_baseUrl/meetings?email=$email');
 
     // Check if token exists
     if (_authToken == null || _authToken!.isEmpty) {
@@ -969,7 +969,7 @@ class ApiService {
   Future<List<PaySlipModel>> getPaySlips(
       String email, BuildContext context) async {
     final url =
-        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/payslip/?email=$email';
+        '$_baseUrl/payslip/?email=$email';
 
     try {
       final response = await ApiService.makeRequest(
@@ -1006,7 +1006,7 @@ class ApiService {
   Future<JobHistoryModel?> getJobHistory(
       String email, BuildContext context) async {
     final url =
-        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/jobHistory/?email=$email';
+        '$_baseUrl/jobHistory/?email=$email';
 
     try {
       final response = await ApiService.makeRequest(
@@ -2299,7 +2299,7 @@ curl -X PATCH $url \\
   static Future<bool> deleteLeaveRequest(
       BuildContext context, String id, String userEmail, String reason) async {
     final String url =
-        'https://work-sync-gbf0h9d5amcxhwcr.canadacentral-01.azurewebsites.net/api/leaves/request';
+        '$_baseUrl/leaves/request';
 
     try {
       // Make the API call using your ApiService

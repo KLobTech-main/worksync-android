@@ -4,6 +4,8 @@ import 'package:dass/ui/jobdesk/jobdrawer/jobhistory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../modal/jobhistorymodel.dart';
+import '../../webservices/api.dart';
 import 'jobdrawer/adressdetails.dart';
 import 'jobdrawer/documents.dart';
 import 'jobdrawer/emergencycontacts.dart';
@@ -21,6 +23,7 @@ class JobProfile extends StatefulWidget {
 }
 
 class _JobProfileState extends State<JobProfile> {
+  late Future<JobHistoryModel?> jobHistoryFuture;
   Widget _buildDrawerItem({
     required IconData icon,
     required String text,
@@ -42,6 +45,11 @@ class _JobProfileState extends State<JobProfile> {
               fontWeight: FontWeight.bold)),
       onTap: onTap,
     );
+  }
+  @override
+  void initState() {
+    super.initState();
+    jobHistoryFuture = ApiService().getJobHistory(widget.email!, context);
   }
 
   @override
