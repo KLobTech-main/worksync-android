@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:dass/colortheme/theme_maneger.dart';
+import 'package:dass/ui/todolist/todolist.dart';
+import 'package:dass/webservices/api.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class CreateTodoList extends StatefulWidget {
-  const CreateTodoList({super.key});
+  final String? name;
+  final String? email;
+
+  const CreateTodoList({Key? key, required this.email, required this.name})
+      : super(key: key);
 
   @override
   State<CreateTodoList> createState() => _CreateTodoListState();
@@ -15,7 +24,82 @@ class _CreateTodoListState extends State<CreateTodoList> {
   TextEditingController priorityController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-  TextEditingController importentController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+
+  bool isLoader = false;
+
+  Future<void> submitForm() async {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final todosData = {
+      'userEmail': widget.email,
+      "description": addDiscriptionController.text.trim(),
+      "date": dateController.text.trim(),
+      "time": timeController.text.trim(),
+      "priority": priorityController.text,
+      "category": categoryController.text.trim(),
+    };
+
+    setState(() {
+      isLoader = true;
+    });
+
+    try {
+      final response = await ApiService.createTodos(todosData, context);
+
+      if (response.statusCode == 201) {
+        Fluttertoast.showToast(
+          msg: "Created Todos Successfully!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor:
+              themeProvider.themeData.brightness == Brightness.light
+                  ? Colors.indigo.shade900
+                  : Color(0xFF57C9E7),
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TodoScreen(
+                    name: widget.name,
+                    email: widget.email,
+                  )),
+        );
+      } else {
+        final errorData = jsonDecode(response.body);
+        Fluttertoast.showToast(
+          msg: "Error: ${errorData['message']}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } finally {
+      setState(() {
+        isLoader = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -61,7 +145,7 @@ class _CreateTodoListState extends State<CreateTodoList> {
                 SizedBox(
                   height: 30,
                 ),
-                TextField(
+                TextFormField(
                   style: TextStyle(
                     color:
                         themeProvider.themeData.brightness == Brightness.light
@@ -98,6 +182,12 @@ class _CreateTodoListState extends State<CreateTodoList> {
                       ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(
                   height: 20,
@@ -154,7 +244,13 @@ class _CreateTodoListState extends State<CreateTodoList> {
                   dropdownColor:
                       themeProvider.themeData.brightness == Brightness.light
                           ? Colors.white
-                          : Colors.grey[800], // Matches theme
+                          : Colors.grey[800],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a priority';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(
                   height: 20,
@@ -167,13 +263,14 @@ class _CreateTodoListState extends State<CreateTodoList> {
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
                     );
+
                     if (pickedDate != null) {
                       dateController.text =
-                          "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                     }
                   },
                   child: AbsorbPointer(
-                    child: TextField(
+                    child: TextFormField(
                       style: TextStyle(
                         color: themeProvider.themeData.brightness ==
                                 Brightness.light
@@ -210,6 +307,12 @@ class _CreateTodoListState extends State<CreateTodoList> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a date';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ),
@@ -220,18 +323,20 @@ class _CreateTodoListState extends State<CreateTodoList> {
                   onTap: () async {
                     TimeOfDay? pickedTime = await showTimePicker(
                       context: context,
-                      initialTime: TimeOfDay.now(), // Default time
+                      initialTime: TimeOfDay.now(),
                     );
+
                     if (pickedTime != null) {
-                      // Format the selected time and set it to the controller
                       final hour = pickedTime.hour.toString().padLeft(2, '0');
                       final minute =
                           pickedTime.minute.toString().padLeft(2, '0');
-                      timeController.text = "$hour:$minute";
+                      final seconds = "00";
+
+                      timeController.text = "$hour:$minute:$seconds";
                     }
                   },
                   child: AbsorbPointer(
-                    child: TextField(
+                    child: TextFormField(
                       style: TextStyle(
                         color: themeProvider.themeData.brightness ==
                                 Brightness.light
@@ -268,20 +373,26 @@ class _CreateTodoListState extends State<CreateTodoList> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a time';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-                TextField(
+                TextFormField(
                   style: TextStyle(
                     color:
                         themeProvider.themeData.brightness == Brightness.light
                             ? Colors.black
                             : Colors.white,
                   ),
-                  controller: importentController,
+                  controller: categoryController,
                   decoration: InputDecoration(
                     labelText: 'Importent',
                     suffixIcon: Icon(Icons.add_box),
@@ -309,8 +420,14 @@ class _CreateTodoListState extends State<CreateTodoList> {
                             : Colors.grey,
                         width: 1,
                       ),
-                    ), // Added
+                    ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a category';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 50),
                 SizedBox(
@@ -318,7 +435,7 @@ class _CreateTodoListState extends State<CreateTodoList> {
                   width: 120,
                   child: GestureDetector(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: isLoader ? null : submitForm,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: themeProvider.themeData.brightness ==
                                 Brightness.light

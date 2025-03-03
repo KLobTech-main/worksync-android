@@ -1071,7 +1071,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
 
-        // Assuming the assets list is under the "data" key
         final List<dynamic> assetsData = data['data'];
 
         if (assetsData.isEmpty) {
@@ -1093,22 +1092,19 @@ class ApiService {
   /// Punch In
   static Future<http.Response> punchIn(Map<String, dynamic> punchIn,
       String punchInTime, String email, BuildContext context) async {
-    // Use dynamic email and punch-in time in the URL
     String url =
         "$_baseUrl/attendance/punch-in?punchInTime=$punchInTime&email=$email";
 
-    // Add required fields to the payload
     punchIn['email'] = email;
     punchIn['punchintime'] = punchInTime;
 
     final headers = {
       "Content-Type": "application/json",
-      "Authorization": _authToken!, // Ensure the token is set
+      "Authorization": _authToken!,
     };
 
     final body = json.encode(punchIn);
 
-    // Debugging: Print the CURL equivalent for troubleshooting
     print("CURL Command:");
     print(
         "curl -X POST $url -H 'Content-Type: application/json' -H 'Authorization: $_authToken' -d '$body'");
@@ -1125,7 +1121,6 @@ class ApiService {
         body: body,
       );
 
-      // Log the response
       print("Response: ${response.statusCode}, Body: ${response.body}");
       return response;
     } catch (e) {
@@ -1134,7 +1129,6 @@ class ApiService {
     }
   }
 
-  ///Tea Start Time
   /// Tea Start Time API
   static Future<http.Response> teaStart(
       Map<String, dynamic> punchIn,
@@ -1142,7 +1136,6 @@ class ApiService {
       String punchInId,
       String teaStartTime,
       BuildContext context) async {
-    // Ensure the base URL is correctly defined
     String url =
         "$_baseUrl/attendance/tea-start?teaStartTime=$teaStartTime&email=$email&id=$punchInId";
 
@@ -1192,7 +1185,7 @@ class ApiService {
     }
     final headers = {
       "Content-Type": "application/json",
-      "Authorization": _authToken!, // Ensure token is set
+      "Authorization": _authToken!,
     };
 
     try {
@@ -1230,23 +1223,19 @@ class ApiService {
     }
     final headers = {
       "Content-Type": "application/json",
-      "Authorization": _authToken!, // Ensure token is set
+      "Authorization": _authToken!,
     };
     print("token:$_authToken");
 
-    // Print cURL command
     print("cURL Command:\n");
     StringBuffer curlCommand = StringBuffer("curl -X POST '$url'");
 
-    // Add headers to the cURL command
     headers.forEach((key, value) {
       curlCommand.write(" -H '$key: $value'");
     });
 
-    // Add the body of the request as a JSON string
     curlCommand.write(" -d '${json.encode(punchIn)}'");
 
-    // Print the final cURL command
     print(curlCommand);
 
     try {
@@ -1327,7 +1316,6 @@ class ApiService {
     String url =
         "$_baseUrl/attendance?punchOutTime=$punchOutTime&email=$email&name=$name&id=$punchInId";
 
-    // Ensure email is added to the payload
     punchOutData.addAll({
       "punchOutTime": DateTime.now().toIso8601String(),
       "email": email,
@@ -1346,7 +1334,6 @@ class ApiService {
       throw Exception("Authorization token is missing!");
     }
 
-    // Debugging: Print the CURL equivalent for troubleshooting
     print(
         "curl -X POST '$url' -H 'Content-Type: application/json' -H 'Authorization: $_authToken' -d '${json.encode(punchOutData)}'");
     try {
@@ -1370,21 +1357,18 @@ class ApiService {
     }
   }
 
-  ///TimeLog
   /// TimeLog
   static Future<TimeLogModelNew?> getTimeLog(
       String email, String year, String month, BuildContext context) async {
     final String url = "$_baseUrl/attendance/monthly/$email/$year/$month";
 
     try {
-      // Construct the curl command
       final curlCommand = """
     curl -X GET "$url" \\
     -H "Content-Type: application/json" \\
     -H "Authorization: $_authToken"
     """;
 
-      // Print the curl command
       print("CURL Command: $curlCommand");
 
       final response = await ApiService.makeRequest(
@@ -1404,11 +1388,9 @@ class ApiService {
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         final responseJson = jsonDecode(response.body);
 
-        // Extracting data from 'body' key
         if (responseJson is Map && responseJson.containsKey('body')) {
           final bodyData = responseJson['body'];
           if (bodyData is Map<String, dynamic>) {
-            // Parse body data into TimeLogModel
             return TimeLogModelNew.fromJson(bodyData);
           }
         }
@@ -2214,6 +2196,92 @@ curl -X PATCH $url \\
     }
   }
 
+//POST API
+
+  static Future<http.Response> createTodos(
+    Map<String, dynamic> todosData,
+    BuildContext context,
+  ) async {
+    final url = Uri.parse("$_baseUrl/todos");
+    final body = json.encode(todosData);
+
+    try {
+      // Generate cURL command
+      String curlCommand = "curl -X POST '$url' "
+          "-H 'Content-Type: application/json' "
+          "-H 'Authorization: $_authToken' "
+          "-d '$body'";
+
+      print(" Requesting POST $url");
+      print(" Request Body: $body");
+      print(
+          " Headers: { \"Content-Type\": \"application/json\", \"Authorization\": \"$_authToken\" }");
+      print(" cURL Command: $curlCommand");
+
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url.toString(),
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+        body: body,
+      );
+
+      print(" Response Status Code: ${response.statusCode}");
+      print(" Response Body: ${response.body}");
+
+      return response;
+    } catch (e) {
+      print("Exception occurred: $e");
+      throw Exception("Failed to create todo: $e");
+    }
+  }
+
+//GET TODOS
+
+  static Future<Map<String, dynamic>?> getTodosList(
+      String email, BuildContext context) async {
+    final String url = "$_baseUrl/todos/user/$email";
+
+    // Generate cURL Command
+    String curlCommand = '''
+  curl -X GET "$url" \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: $_authToken"
+  ''';
+
+    print("🔍 cURL Command:\n$curlCommand");
+
+    try {
+      final response = await ApiService.makeRequest(
+        context: context,
+        url: url,
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": _authToken!,
+        },
+      );
+
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return {"statusCode": 200, "body": json.decode(response.body)};
+      } else if (response.statusCode == 404) {
+        return {"statusCode": 404, "body": null};
+      } else {
+        debugPrint('Error: ${response.statusCode}');
+        return {"statusCode": response.statusCode, "body": null};
+      }
+    } catch (e) {
+      debugPrint('Error fetching todos: $e');
+      return null;
+    }
+  }
+
   static Future<http.Response> makeRequest({
     required BuildContext context,
     required String url,
@@ -2225,7 +2293,6 @@ curl -X PATCH $url \\
       final uri = Uri.parse(url);
       late http.Response response;
 
-      // Make the API request based on the method (GET, POST, etc.)
       if (method == 'GET') {
         response = await http.get(uri, headers: headers);
       } else if (method == 'POST') {
@@ -2238,20 +2305,17 @@ curl -X PATCH $url \\
         response = await http.patch(uri, headers: headers);
       }
 
-      // If the response status is 401, show the logout dialog
       if (response.statusCode == 401) {
         _handleTokenExpired(context);
       }
 
-      return response; // Return the response to the caller
+      return response;
     } catch (e) {
-      // Handle connection or server errors
       return http.Response(
           jsonEncode({'error': 'Network error occurred'}), 500);
     }
   }
 
-  // Function to handle token expiration
   static void _handleTokenExpired(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showDialog(

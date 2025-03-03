@@ -1,5 +1,7 @@
 import 'package:dass/colortheme/theme_maneger.dart';
+import 'package:dass/modal/todosmodel.dart';
 import 'package:dass/ui/todolist/createtodolist.dart';
+import 'package:dass/webservices/api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,48 +9,36 @@ class TodoScreen extends StatefulWidget {
   final String? name;
   final String? email;
 
-  TodoScreen({
-    Key? key,
-    this.name,
-    this.email,
-  }) : super(key: key);
+  const TodoScreen({Key? key, required this.email, required this.name})
+      : super(key: key);
+
   @override
   State<TodoScreen> createState() => _TodoScreenState();
 }
 
 class _TodoScreenState extends State<TodoScreen> {
-  List<TodoItemData> todoItems = [
-    TodoItemData(
-      title: 'Careers advice appointment',
-      date: '17/10 at 11:00 - 11:30',
-      category: 'Work',
-      categoryColor: Colors.blue,
-      importance: 'Important',
-      importanceColor: Colors.red,
-      isChecked: false,
-    ),
-    TodoItemData(
-      title: 'Return library books',
-      date: '17/10 at any time',
-      category: 'Fun',
-      categoryColor: Colors.pink,
-      importance: 'Important',
-      importanceColor: Colors.red,
-      isChecked: false,
-    ),
-    TodoItemData(
-      title: 'Finish group presentation slides',
-      date: '17/10 at 13:00 - 15:00',
-      category: 'Work',
-      categoryColor: Colors.blue,
-      isChecked: false,
-    ),
-  ];
+  List<TodosModel> todoItems = [];
+  bool isLoading = true;
 
-  void toggleCheckbox(int index, bool? value) {
-    setState(() {
-      todoItems[index].isChecked = value ?? false;
-    });
+  @override
+  void initState() {
+    super.initState();
+    fetchTodos();
+  }
+
+  Future<void> fetchTodos() async {
+    final response = await ApiService.getTodosList(widget.email!, context);
+    if (response != null && response['statusCode'] == 200) {
+      List<dynamic> data = response['body'];
+      setState(() {
+        todoItems = data.map((json) => TodosModel.fromJson(json)).toList();
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -84,7 +74,7 @@ class _TodoScreenState extends State<TodoScreen> {
                       backgroundColor:
                           themeProvider.themeData.brightness == Brightness.light
                               ? Colors.white
-                              : Color(0xFF57C9E7),
+                              : const Color(0xFF57C9E7),
                       child: InkWell(
                         child: Icon(Icons.add,
                             size: 25,
@@ -96,7 +86,10 @@ class _TodoScreenState extends State<TodoScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CreateTodoList(),
+                              builder: (context) => CreateTodoList(
+                                name: widget.name,
+                                email: widget.email,
+                              ),
                             ),
                           );
                         },
@@ -119,7 +112,7 @@ class _TodoScreenState extends State<TodoScreen> {
                   ),
                 ),
                 const Text(
-                  "1 to 6 items",
+                  "Your Todos",
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -131,22 +124,30 @@ class _TodoScreenState extends State<TodoScreen> {
           ),
 
           Expanded(
-            child: ListView.builder(
-              itemCount: todoItems.length,
-              itemBuilder: (context, index) {
-                final item = todoItems[index];
-                return TodoItem(
-                  title: item.title,
-                  date: item.date,
-                  category: item.category,
-                  categoryColor: item.categoryColor,
-                  importance: item.importance,
-                  importanceColor: item.importanceColor,
-                  isChecked: item.isChecked,
-                  onCheckboxChanged: (value) => toggleCheckbox(index, value),
-                );
-              },
-            ),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : todoItems.isEmpty
+                    ? const Center(child: Text("No todos available"))
+                    : ListView.builder(
+                        itemCount: todoItems.length,
+                        itemBuilder: (context, index) {
+                          final item = todoItems[index];
+                          return TodoItem(
+                            title: item.description ?? "No Title",
+                            date: "${item.date} at ${item.time}",
+                            category: item.category ?? "General",
+                            categoryColor: Colors.blue,
+                            importance: item.priority ?? "Normal",
+                            importanceColor: Colors.red,
+                            isChecked: item.isChecked,
+                            onCheckboxChanged: (value) {
+                              setState(() {
+                                todoItems[index].isChecked = value ?? false;
+                              });
+                            },
+                          );
+                        },
+                      ),
           ),
         ],
       ),
