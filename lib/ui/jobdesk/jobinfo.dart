@@ -23,7 +23,8 @@ class JobProfile extends StatefulWidget {
 }
 
 class _JobProfileState extends State<JobProfile> {
-  late Future<JobHistoryModel?> jobHistoryFuture;
+  Future<JobHistoryModel?>? jobHistoryData;
+  Future<String?>? latestSalary;
   Widget _buildDrawerItem({
     required IconData icon,
     required String text,
@@ -49,8 +50,19 @@ class _JobProfileState extends State<JobProfile> {
   @override
   void initState() {
     super.initState();
-    jobHistoryFuture = ApiService().getJobHistory(widget.email!, context);
+    jobHistoryData = ApiService().getJobHistory(widget.email!, context);
+    latestSalary = getLastUpdatedSalary(widget.email!);
   }
+
+  Future<String?> getLastUpdatedSalary(String email) async {
+    final userData = await ApiService.getUserByEmail(email, context);
+
+    if (userData != null && userData.salaryOverview!.isNotEmpty) {
+      return userData.salaryOverview!.last; // Get the last updated salary
+    }
+    return "Not Added Yet";
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +300,7 @@ class _JobProfileState extends State<JobProfile> {
             children: [
               // Gradient Background Container
               Container(
-                height: MediaQuery.of(context).size.height * 0.3,
+                height: MediaQuery.of(context).size.height * 0.25,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: Theme.of(context).brightness == Brightness.light
@@ -337,7 +349,7 @@ class _JobProfileState extends State<JobProfile> {
                                     ? Colors.blue.shade900
                                     : Colors.white),
                           ),
-                          SizedBox(height: constraints.maxHeight * 0.02),
+                          SizedBox(height: constraints.maxHeight * 0.04),
                           // User Name
                           Flexible(
                             child: SizedBox(
@@ -356,33 +368,6 @@ class _JobProfileState extends State<JobProfile> {
                             ),
                           ),
                           SizedBox(height: constraints.maxHeight * 0.03),
-                          // Job Title
-                          Flexible(
-                            child: Text(
-                              'Business Development Executive',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.04,
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.white.withOpacity(0.9)
-                                      : Colors.grey),
-                            ),
-                          ),
-                          SizedBox(height: constraints.maxHeight * 0.005),
-                          // Employee Details
-                          Flexible(
-                            child: Text(
-                              'EMP-18 | Permanent Employee',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.035,
-                                  color: themeProvider.themeData.brightness ==
-                                          Brightness.light
-                                      ? Colors.white.withOpacity(0.8)
-                                      : Colors.grey),
-                            ),
-                          ),
                         ],
                       ),
                     );
@@ -395,48 +380,88 @@ class _JobProfileState extends State<JobProfile> {
           SizedBox(height: 20),
 
           // Data Cards Section
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                children: [
-                  _buildInfoCard(
-                    context,
-                    icon: Icons.apartment,
-                    title: 'Department',
-                    value: 'Sales & Business\nDevelopment',
-                    color: Colors.orange,
-                  ),
-                  _buildInfoCard(
-                    context,
-                    icon: Icons.attach_money,
-                    title: 'Salary',
-                    value: 'Not Added Yet',
-                    color: Colors.red,
-                  ),
-                  _buildInfoCard(
-                    context,
-                    icon: Icons.date_range,
-                    title: 'Joining Date',
-                    value: '05-02-2024',
-                    color: Colors.green,
-                  ),
-                  _buildInfoCard(
-                    context,
-                    icon: Icons.timer,
-                    title: 'Work Shift',
-                    value: 'Regular Work Shift',
-                    color: Colors.purple,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+    Expanded(
+    child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: FutureBuilder<JobHistoryModel?>(
+    future: jobHistoryData,
+    builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+    return Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+    return Center(child: Text('Error: ${snapshot.error}'));
+    } else if (!snapshot.hasData) {
+    return Center(child: Text("No data available"));
+    }
+
+    // Extract job details from fetched data
+    final jobData = snapshot.data!;
+
+    return GridView.count(
+    crossAxisCount: 2,
+    mainAxisSpacing: 16,
+    crossAxisSpacing: 16,
+    children: [
+    _buildInfoCard(
+    context,
+    icon: Icons.apartment,
+    title: 'Department',
+    value: jobData.department ?? 'Not Available',
+    color: Colors.orange,
+    ),
+      FutureBuilder<String?>(
+        future: getLastUpdatedSalary(widget.email!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildInfoCard(
+              context,
+              icon: Icons.attach_money,
+              title: 'Salary',
+              value: 'Loading...', // Show loading state
+              color: Colors.red,
+            );
+          } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+            return _buildInfoCard(
+              context,
+              icon: Icons.attach_money,
+              title: 'Salary',
+              value: 'Not Added Yet', // Default message if no salary found
+              color: Colors.red,
+            );
+          }
+
+          return _buildInfoCard(
+            context,
+            icon: Icons.attach_money,
+            title: 'Salary',
+            value: '₹${snapshot.data}', // Show fetched salary
+            color: Colors.red,
+          );
+        },
       ),
+
+      _buildInfoCard(
+    context,
+    icon: Icons.date_range,
+    title: 'Joining Date',
+    value: jobData.joiningDate ?? 'Not Available',
+    color: Colors.green,
+    ),
+    _buildInfoCard(
+    context,
+    icon: Icons.timer,
+    title: 'Work Shift',
+    value: jobData.workShift!.shiftType!,
+    color: Colors.purple,
+    ),
+    ],
+    );
+    },
+    ),
+    ),
+    ),
+    ],
+      )
     );
   }
 
@@ -484,7 +509,8 @@ class _JobProfileState extends State<JobProfile> {
           Text(
             value,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14,
+              fontWeight:FontWeight.w400,
               color: themeProvider.themeData.brightness == Brightness.light
                   ? Colors.black
                   : Colors.grey,

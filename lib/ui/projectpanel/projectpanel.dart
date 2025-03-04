@@ -2,12 +2,61 @@
 import 'package:dass/ui/projectpanel/projectdetailspage.dart';
 import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import '../../modal/projectdetailsmodel.dart';
+import '../../webservices/api.dart';
 class ProjectPanelPage extends StatefulWidget {
   @override
   State<ProjectPanelPage> createState() => _ProjectPanelPageState();
 }
 
 class _ProjectPanelPageState extends State<ProjectPanelPage> {
+  List<ProjectModel> _projects = [];
+  List<ProjectModel> _filteredProjects = [];
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProjects();
+  }
+
+  Future<void> _fetchProjects() async {
+    try {
+      List<ProjectModel?>? projects = await ApiService.getProjects(context);
+      if (projects != null) {
+        setState(() {
+          _projects = projects.whereType<ProjectModel>().toList();
+          _filteredProjects = _projects;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+      });
+    }
+  }
+
+
+  void _searchProjects(String query) {
+    setState(() {
+      _filteredProjects = _projects
+          .where((project) => project.projectName.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +76,7 @@ class _ProjectPanelPageState extends State<ProjectPanelPage> {
               children: [
                 Expanded(
                   child: TextField(
+                    onChanged: _searchProjects,
                     decoration: InputDecoration(
                       hintText: 'Search projects...',
                       hintStyle: TextStyle(color: Colors.grey.shade500),
@@ -47,8 +97,8 @@ class _ProjectPanelPageState extends State<ProjectPanelPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.filter_list, color: Colors.white),
-                    onPressed: () {},
+                    icon: Icon(Icons.refresh, color: Colors.white),
+                    onPressed: _fetchProjects, // Reload data
                   ),
                 ),
               ],
@@ -57,22 +107,30 @@ class _ProjectPanelPageState extends State<ProjectPanelPage> {
 
           // Project List (Grid View)
           Expanded(
-            child: GridView.builder(
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator()) // Show loading indicator
+                : _hasError
+                ? Center(child: Text("Failed to load projects")) // Handle error
+                : _filteredProjects.isEmpty
+                ? Center(child: Text("No projects found")) // Handle empty state
+                : GridView.builder(
               padding: const EdgeInsets.all(12),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                 childAspectRatio: 4 / 3,
+                childAspectRatio: 4 / 3,
               ),
-              itemCount: 6, // Replace with your project count
+              itemCount: _filteredProjects.length,
               itemBuilder: (context, index) {
+                ProjectModel project = _filteredProjects[index];
+
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProjectDetailsPage(),
+                        builder: (context) => ProjectDetailsPage(project: project),
                       ),
                     );
                   },
@@ -98,82 +156,13 @@ class _ProjectPanelPageState extends State<ProjectPanelPage> {
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Project Name',
+                                  project.projectName, // Actual project name
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                     color: Colors.indigo.shade900,
                                   ),
                                   overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 6),
-                          // Status below project name
-                          Text(
-                            'Status: On Going', // Dynamic status text
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Spacer(),
-                          // Three-dot menu aligned at the bottom-right
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              PopupMenuButton<String>(
-                                onSelected: (value) {
-                                  // Handle status changes here
-                                  print("Status changed to $value");
-                                },
-                                itemBuilder: (BuildContext context) => [
-                                  PopupMenuItem(
-                                    value: 'On Going',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.play_arrow, color: Colors.green),
-                                        SizedBox(width: 8),
-                                        Text('On Going'),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 'On Hold',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.pause, color: Colors.amber),
-                                        SizedBox(width: 8),
-                                        Text('On Hold'),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 'Terminated',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.close, color: Colors.red),
-                                        SizedBox(width: 8),
-                                        Text('Terminated'),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 'Completed',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.check, color: Colors.blue),
-                                        SizedBox(width: 8),
-                                        Text('Completed'),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                                child: Icon(
-                                  Icons.more_vert,
-                                  color: Colors.grey.shade600,
-                                  size: 20,
                                 ),
                               ),
                             ],

@@ -24,6 +24,7 @@ import '../modal/getuserbyemailmodel.dart';
 import '../modal/jobhistorymodel.dart';
 import '../modal/meetingsmodel.dart';
 import '../modal/payslipmodel.dart';
+import '../modal/projectdetailsmodel.dart';
 
 class ApiService {
   static const String _baseUrl =
@@ -1481,6 +1482,15 @@ class ApiService {
   static Future<DailyLogModel?> getDailyLog(
       String email, String date, BuildContext context) async {
     final String url = "$_baseUrl/attendance/day?email=$email&date=$date";
+
+    // Generate and print the equivalent cURL command
+    String curlCommand = """
+  curl -X GET "$url" \\
+       -H "Content-Type: application/json" \\
+       -H "Authorization: $_authToken"
+  """;
+    print("Generated cURL Command:\n$curlCommand");
+
     try {
       final response = await ApiService.makeRequest(
         context: context,
@@ -1491,6 +1501,7 @@ class ApiService {
           "Authorization": _authToken!,
         },
       );
+
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
 
@@ -1511,6 +1522,7 @@ class ApiService {
       return null;
     }
   }
+
 
   ///AttendanceDetails
 
@@ -2410,6 +2422,40 @@ curl -X POST $url \
       // Print the error for debugging
       print("Error deleting leave request: $e");
       return false;
+    }
+  }
+
+  static Future<List<ProjectModel>?> getProjects(BuildContext context) async {
+    final String url = "$_baseUrl/projects";
+
+    try {
+      // Generate and print cURL command for debugging
+      final curl = 'curl -X GET "$url" -H "accept: */*" -H "Authorization: $_authToken"';
+      print("\n--- cURL Command for GET ---\n$curl\n");
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "accept": "*/*",
+          "Authorization": _authToken ?? "", // Ensure auth token is set
+        },
+      );
+
+      // Log full response
+      print("\n--- Response for GET ---");
+      print("Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData.map((json) => ProjectModel.fromJson(json)).toList();
+      } else {
+        print("Failed to fetch projects. Status: ${response.statusCode}\nResponse: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print("\nError during GET: $e");
+      return null;
     }
   }
 

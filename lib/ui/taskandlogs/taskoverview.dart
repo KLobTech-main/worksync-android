@@ -135,17 +135,17 @@ class _TaskOverviewScreenState extends State<TaskOverviewScreen> {
                           title: 'My Tasks',
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedTaskType = "Tasks By Me";
-                          });
-                        },
-                        child: TaskCard(
-                          color: Colors.green.shade900,
-                          title: 'Tasks By Me',
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     setState(() {
+                      //       selectedTaskType = "Tasks By Me";
+                      //     });
+                      //   },
+                      //   child: TaskCard(
+                      //     color: Colors.green.shade900,
+                      //     title: 'Tasks By Me',
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
